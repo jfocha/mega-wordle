@@ -1,0 +1,15 @@
+body {
+  margin: 0px;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  background: linear-gradient(135deg, #F3E7E9, #E3EEFF);
+}
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+li {
+  list-style-type: none;
+}
