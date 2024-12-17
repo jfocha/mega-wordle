@@ -9,21 +9,26 @@ const App = () => {
   const [currentGuess, setCurrentGuess] = useState("");
   const [isGameOver, setIsGameOver] = useState(false);
 
-  const handleInputChange = (event) => {
-    setCurrentGuess(event.target.value.toUpperCase());
-  };
-  const handleGuess = () => {
+  const handleGuess = (event) => {
     if (currentGuess.length !== 5) return;
     const updatedGuesses = [...guesses, currentGuess];
     setGuesses(updatedGuesses);
     if (currentGuess === targetWord || updatedGuesses.length >= maxAttempts) {
       setIsGameOver(true);
     }
+    setCurrentGuess("");
+  };
+  const handleKeyDown = (event) => {
+    if (event.keyCode === 13) {
+      handleGuess(event);
+      setCurrentGuess("");
+    }
   };
 
   return (
     <div className="main-container">
-      <h1>Wordle</h1>
+      <h1>Mega Wordle</h1>
+      <div className="guesses">
       {guesses.map((guess, index) => (
         <ul>
           <li key={index}>
@@ -31,15 +36,23 @@ const App = () => {
           </li>
         </ul>
       ))}
+      </div>
       {!isGameOver && (
         <input
           placeholder="Enter your guess"
-          onChange={handleInputChange}
+          value={currentGuess}
+          onChange={e => setCurrentGuess(e.target.value.toUpperCase())}
+          onKeyDown={handleKeyDown}
           maxLength={targetWord.length}
         />
       )}
       {!isGameOver && <button onClick={handleGuess}>Guess</button>}
-      {isGameOver && currentGuess !== targetWord && <p>{targetWord}</p>}
+      {isGameOver && currentGuess !== targetWord && (
+        <>
+          <h2>Correct answer:</h2>
+          <Row guess={targetWord} targetWord={targetWord} />
+        </>
+      )}
     </div>
   );
 };

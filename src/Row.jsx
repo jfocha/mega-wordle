@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./Row.css";
 
 const Row = ({ guess, targetWord }) => {
