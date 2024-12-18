@@ -3,24 +3,21 @@ import "./App.css";
 import Row from "./Row.jsx";
 
 const App = () => {
-  const targetWord = "REACT";
-  const maxAttempts = 6;
+  const targetWord = "REAC";
+  const level = targetWord.length - 3;
+  const maxAttempts = 8 - level;
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setCurrentGuess] = useState("");
   const [isGameOver, setIsGameOver] = useState(false);
 
-  const handleGuess = (event) => {
-    if (currentGuess.length !== 5) return;
+  const handleKeyDown = (event) => {
+    if (event.keyCode === 13) {
+      if (currentGuess.length !== targetWord.length) return;
     const updatedGuesses = [...guesses, currentGuess];
     setGuesses(updatedGuesses);
     if (currentGuess === targetWord || updatedGuesses.length >= maxAttempts) {
       setIsGameOver(true);
     }
-    setCurrentGuess("");
-  };
-  const handleKeyDown = (event) => {
-    if (event.keyCode === 13) {
-      handleGuess(event);
       setCurrentGuess("");
     }
   };
@@ -28,29 +25,39 @@ const App = () => {
   return (
     <div className="main-container">
       <h1>Mega Wordle</h1>
+      <h2>Level {level}</h2>
       <div className="guesses">
       {guesses.map((guess, index) => (
-        <ul>
-          <li key={index}>
+          <div key={index}>
             <Row guess={guess} targetWord={targetWord} />
-          </li>
-        </ul>
+          </div>
       ))}
       </div>
       {!isGameOver && (
+        
+        <div class="wrapper">
+        <Row guess={currentGuess} targetWord="" />
         <input
-          placeholder="Enter your guess"
+          type="text"
           value={currentGuess}
           onChange={e => setCurrentGuess(e.target.value.toUpperCase())}
           onKeyDown={handleKeyDown}
           maxLength={targetWord.length}
+          onBlur={e => {
+            if (e.relatedTarget === null) {
+                e.target.focus();
+            }
+          }}
+          autoFocus
         />
+        </div>
+        
       )}
-      {!isGameOver && <button onClick={handleGuess}>Guess</button>}
-      {isGameOver && currentGuess !== targetWord && (
+      {isGameOver && (
         <>
-          <h2>Correct answer:</h2>
+          <h3>Correct answer:</h3>
           <Row guess={targetWord} targetWord={targetWord} />
+          {/* Create "next Level" or "restart game" */}
         </>
       )}
     </div>

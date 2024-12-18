@@ -15,7 +15,10 @@
     font-weight: bold;
     font-size: 1.2em;
   }
-  
+  .letter.try {
+    background-color: turquoise;
+  }
+
   .letter.correct {
     background-color: green;
   }

@@ -3,6 +3,7 @@ import "./Row.css";
 
 const Row = ({ guess, targetWord }) => {
   const getLetterStatus = (letter, index) => {
+    if (targetWord === "") return "try"
     if (letter === targetWord[index]) {
       return "correct";
     } else if (targetWord.includes(letter)) {
