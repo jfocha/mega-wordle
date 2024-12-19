@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import "./App.css";
 import Row from "./Row.jsx";
+import { pickedWords } from './words.js';
 
 const App = () => {
-  const targetWords = ["DOGS", "REACT", "WORDLE", "FORTUNE", "ACHIEVER"];
+  const targetWords = pickedWords;
   const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
   const targetWord = targetWords[currentLevelIndex];
   const level = currentLevelIndex + 1;
