@@ -9,14 +9,20 @@ const App = () => {
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setCurrentGuess] = useState("");
   const [isGameOver, setIsGameOver] = useState(false);
+  const [streak, setStreak] = useState(0);
 
   useEffect(() => {
     setPickedWords(generateNewWords());
+    const savedStreak = localStorage.getItem('megaWordleStreak');
+    if (savedStreak) {
+      setStreak(parseInt(savedStreak, 10));
+    }
   }, []);
 
   const targetWord = pickedWords[currentLevelIndex] || '';
   const level = currentLevelIndex + 1;
   const maxAttempts = targetWord ? 11 - targetWord.length : 0;
+
   const handleKeyDown = (event) => {
     if (event.keyCode === 13) {
       if (currentGuess.length !== targetWord.length) return;
@@ -25,6 +31,11 @@ const App = () => {
       setGuesses(updatedGuesses);
       if (currentGuess === targetWord) {
         setIsGameOver(true);
+        if (level === 5) {
+          const newStreak = streak + 1;
+          setStreak(newStreak);
+          localStorage.setItem('megaWordleStreak', newStreak.toString());
+        }
       } else if (updatedGuesses.length >= maxAttempts) {
         setIsGameOver(true);
       }
@@ -50,7 +61,12 @@ console.log(pickedWords)
     setGuesses([]);
     setCurrentGuess("");
     setIsGameOver(false);
+    if (level < 5) {
+      setStreak(0);
+      localStorage.setItem('megaWordleStreak', '0');
+    }
   };
+
   return (
     <div className="main-container">
       <h1>Mega Wordle</h1>
@@ -88,13 +104,17 @@ console.log(pickedWords)
             (level === 5) ? (
               <>
                 <h4>You Win!</h4>
+                <p>Streak: {streak}</p>
                 <button onClick={restartGame}>Restart Game</button>
               </>
             ) : (
             <button onClick={nextLevel}>Next Level</button>
             )
           ) : (
-            <button onClick={restartGame}>Restart Game</button>
+            <>
+              <p>Streak ended at: {streak}</p>
+              <button onClick={restartGame}>Restart Game</button>
+            </>
           )}
         </>
       )}
