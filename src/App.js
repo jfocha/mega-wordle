@@ -1,21 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import Row from "./Row.jsx";
-import { pickedWords } from './words.js';
+import { generateNewWords, isWordInList } from './words.js';
 
 const App = () => {
-  const targetWords = pickedWords;
+  const [pickedWords, setPickedWords] = useState([]);
   const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
-  const targetWord = targetWords[currentLevelIndex];
-  const level = currentLevelIndex + 1;
-  const maxAttempts = 11 - targetWord.length;
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setCurrentGuess] = useState("");
   const [isGameOver, setIsGameOver] = useState(false);
 
+  useEffect(() => {
+    setPickedWords(generateNewWords());
+  }, []);
+
+  const targetWord = pickedWords[currentLevelIndex] || '';
+  const level = currentLevelIndex + 1;
+  const maxAttempts = targetWord ? 11 - targetWord.length : 0;
   const handleKeyDown = (event) => {
     if (event.keyCode === 13) {
       if (currentGuess.length !== targetWord.length) return;
+      if (isWordInList(currentGuess)) {
       const updatedGuesses = [...guesses, currentGuess];
       setGuesses(updatedGuesses);
       if (currentGuess === targetWord) {
@@ -24,11 +29,14 @@ const App = () => {
         setIsGameOver(true);
       }
       setCurrentGuess("");
+    } else {
+      alert("Word not in word bank")
+    }
     }
   };
-
+console.log(pickedWords)
   const nextLevel = () => {
-    if (currentLevelIndex < targetWords.length - 1) {
+    if (currentLevelIndex < targetWord.length - 1) {
       setCurrentLevelIndex(currentLevelIndex + 1);
       setGuesses([]);
       setCurrentGuess("");
@@ -37,6 +45,7 @@ const App = () => {
   };
 
   const restartGame = () => {
+    setPickedWords(generateNewWords());
     setCurrentLevelIndex(0);
     setGuesses([]);
     setCurrentGuess("");
@@ -75,7 +84,7 @@ const App = () => {
         <>
           <h3>Correct answer:</h3>
           <Row guess={targetWord} targetWord={targetWord} />
-          {guesses.length < maxAttempts ? (
+          {(guesses[guesses.length - 1] === targetWord) ? (
             (level === 5) ? (
               <>
                 <h4>You Win!</h4>
