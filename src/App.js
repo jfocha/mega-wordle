@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import Row from "./Row.jsx";
+import Keys from "./Keys.jsx";
 import { generateNewWords, isWordInList } from './words.js';
 
 const App = () => {
@@ -8,6 +9,7 @@ const App = () => {
   const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setCurrentGuess] = useState("");
+  const [isInvalidGuess, setIsInvalidGuess] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [streak, setStreak] = useState(0);
 
@@ -27,8 +29,8 @@ const App = () => {
     if (event.keyCode === 13) {
       if (currentGuess.length !== targetWord.length) return;
       if (isWordInList(currentGuess)) {
-      const updatedGuesses = [...guesses, currentGuess];
-      setGuesses(updatedGuesses);
+        const updatedGuesses = [...guesses, currentGuess];
+        setGuesses(updatedGuesses);
       if (currentGuess === targetWord) {
         setIsGameOver(true);
         if (level === 5) {
@@ -41,7 +43,8 @@ const App = () => {
       }
       setCurrentGuess("");
     } else {
-      alert("Word not in word bank")
+      setIsInvalidGuess(true);
+      setTimeout(() => setIsInvalidGuess(false), 1000);
     }
     }
   };
@@ -80,7 +83,7 @@ console.log(pickedWords)
       </div>
       {!isGameOver && (
         <div className="wrapper">
-          <Row guess={currentGuess} targetWord="" />
+          <Row guess={currentGuess} targetWord="" className={isInvalidGuess ? 'invalid' : ''} />
           <input
             type="text"
             value={currentGuess}
@@ -118,6 +121,9 @@ console.log(pickedWords)
           )}
         </>
       )}
+      <div className="keyboard">
+        <Keys guesses={guesses} targetWord={targetWord} />
+      </div>
     </div>
   );
 };

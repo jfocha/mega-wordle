@@ -1,7 +1,7 @@
 import React from "react";
 import "./Row.css";
 
-const Row = ({ guess, targetWord }) => {
+const Row = ({ guess, targetWord, className = '' }) => {
   const getLetterStatus = (letter, index) => {
     if (targetWord === "") return "try"
     if (letter === targetWord[index]) {
@@ -14,7 +14,7 @@ const Row = ({ guess, targetWord }) => {
   };
 
   return (
-    <div className="word-row">
+    <div className={`word-row ${className}`}>
       {guess.split("").map((letter, index) => (
         <span
           key={index}
