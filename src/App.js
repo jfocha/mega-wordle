@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import "./App.css";
 import Row from "./Row.jsx";
 import Keys from "./Keys.jsx";
@@ -21,11 +21,11 @@ const App = () => {
     }
   }, []);
 
-  const targetWord = pickedWords[currentLevelIndex] || '';
-  const level = currentLevelIndex + 1;
-  const maxAttempts = targetWord ? 11 - targetWord.length : 0;
+  const targetWord = useMemo(() => pickedWords[currentLevelIndex] || '', [pickedWords, currentLevelIndex]);
+  const level = useMemo(() => currentLevelIndex + 1, [currentLevelIndex]);
+  const maxAttempts = useMemo(() => targetWord ? 11 - targetWord.length : 0, [targetWord]);
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = useCallback((event) => {
     if (event.keyCode === 13) {
       if (currentGuess.length !== targetWord.length) return;
       if (isWordInList(currentGuess)) {
@@ -47,18 +47,18 @@ const App = () => {
       setTimeout(() => setIsInvalidGuess(false), 1000);
     }
     }
-  };
+  }, [currentGuess, targetWord, guesses, level, streak, maxAttempts]);
 console.log(pickedWords)
-  const nextLevel = () => {
+  const nextLevel = useCallback(() => {
     if (currentLevelIndex < targetWord.length - 1) {
       setCurrentLevelIndex(currentLevelIndex + 1);
       setGuesses([]);
       setCurrentGuess("");
       setIsGameOver(false);
     }
-  };
+  }, [currentLevelIndex, targetWord.length]);
 
-  const restartGame = () => {
+  const restartGame = useCallback(() => {
     setPickedWords(generateNewWords());
     setCurrentLevelIndex(0);
     setGuesses([]);
@@ -68,7 +68,7 @@ console.log(pickedWords)
       setStreak(0);
       localStorage.setItem('megaWordleStreak', '0');
     }
-  };
+  }, [level]);
 
   return (
     <div className="main-container">
