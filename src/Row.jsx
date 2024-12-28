@@ -12,7 +12,7 @@ const getLetterStatus = (letter, index, targetWord) => {
   }
 };
 
-const Row = React.memo(({ guess, targetWord, className = "" }) => {
+const Row = React.memo(({ guess, targetWord, className = "", isInput }) => {
   const letters = useMemo(() => {
     return guess.split("").map((letter, index) => ({
       letter,

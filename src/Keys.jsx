@@ -32,7 +32,7 @@ const getLetterStatus = (letter, guesses, targetWord) => {
 };
 
 const Keys = React.memo(
-  ({ guesses, targetWord, onKeyClick, onEnter, onBackspace }) => {
+  ({ guesses, targetWord, onKeyClick, onEnter, onBackspace, keyStyle, specialKeyStyle }) => {
     const keyStatuses = useMemo(() => {
       return keys.flat().map((letter) => ({
         letter,
@@ -58,11 +58,13 @@ const Keys = React.memo(
           <div key={rowIndex} className="key-row">
             {row.map((letter) => {
               const keyStatus = keyStatuses.find((k) => k.letter === letter);
+              const isSpecial = ["ENTER", "⌫"].includes(letter);
               return (
                 <button
                   key={letter}
-                  className={`keys ${keyStatus.status}`}
+                  className={`keys ${keyStatus.status} ${isSpecial ? 'special' : 'letter'}`}
                   onClick={() => handleKeyClick(letter)}
+                  style={isSpecial ? specialKeyStyle : keyStyle}
                 >
                   {letter}
                 </button>

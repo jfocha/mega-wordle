@@ -13,12 +13,24 @@ const App = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [streak, setStreak] = useState(0);
 
+  
+
   useEffect(() => {
     setPickedWords(generateNewWords());
     const savedStreak = localStorage.getItem('megaWordleStreak');
     if (savedStreak) {
       setStreak(parseInt(savedStreak, 10));
     }
+    const timer = setTimeout(() => {
+      const cards = document.querySelectorAll('.card-wrapper');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.classList.add('flip-down');
+        }, index * 100);
+      });
+    }, 500);  // Delay the start of the animation by 500ms
+  
+    return () => clearTimeout(timer);
   }, []);
 
   const targetWord = useMemo(() => pickedWords[currentLevelIndex] || '', [pickedWords, currentLevelIndex]);
@@ -41,6 +53,7 @@ const App = () => {
         setIsGameOver(true);
       }
       setCurrentGuess("");
+      document.activeElement.blur();
     } else {
       setIsInvalidGuess(true);
       setTimeout(() => setIsInvalidGuess(false), 1000);
@@ -99,10 +112,46 @@ const App = () => {
     setCurrentGuess(prev => prev.slice(0, -1));
   }, []);
 
+  const customKeyStyle = {
+    width: '27px',
+    height: '35px',
+    backgroundColor: '#d3d6da',
+    color: '#1a1a1b',
+    border: '2px solid #6a6a6a',
+    borderRadius: '4px',
+    fontSize: '1.2rem',
+    fontWeight: 'bold',
+    margin: '2px',
+    padding: '0',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  };
+
+  const customSpecialKeyStyle = {
+    ...customKeyStyle,
+    width: 'auto',
+    minWidth: '65px',
+    backgroundColor: '#6a6a6a',
+    border: '2px solid #8a8a8a',
+    fontSize: '0.8rem',
+  };
+
   console.log(pickedWords)
   return (
     <div className="main-container">
-      <h1>Mega Wordle</h1>
+      <div className="title-wrapper">
+      {"MEGA WORDLE".split('').map((letter, index) => (
+        <div key={index} className="card-wrapper flip-down" style={{animationDelay: `${index * 0.1}s`}}>
+          <div className="card">
+            <div className="front">{letter}</div>
+            <div className="back">{letter}</div>
+          </div>
+        </div>
+      ))}
+    </div>
       <h2>Level {level}</h2>
       <div className="guesses">
         {guesses.map((guess, index) => (
@@ -112,9 +161,9 @@ const App = () => {
         ))}
       </div>
       {!isGameOver && (
-        <div className="wrapper">
+        <>
           <Row guess={currentGuess} targetWord="" className={isInvalidGuess ? 'invalid' : ''} />
-        </div>
+        </>
       )}
       {isGameOver && (
         <>
@@ -125,15 +174,30 @@ const App = () => {
               <>
                 <h4>You Win!</h4>
                 <p>Streak: {streak}</p>
-                <button onClick={restartGame}>Restart Game</button>
+                <button 
+                  onClick={restartGame}
+                  className="game-button restart-button"
+                >
+                  Restart Game
+                </button>
               </>
             ) : (
-              <button onClick={nextLevel}>Next Level</button>
+              <button 
+                onClick={nextLevel}
+                className="game-button next-level-button" 
+              >
+                Next Level
+              </button>
             )
           ) : (
             <>
               <p>Streak ended at: {streak}</p>
-              <button onClick={restartGame}>Restart Game</button>
+              <button 
+                onClick={restartGame}
+                className="game-button restart-button"
+              >
+                Restart Game
+              </button>
             </>
           )}
         </>
@@ -144,6 +208,8 @@ const App = () => {
           onKeyClick={handleKeyClick}
           onEnter={handleGuess}
           onBackspace={handleBackspace}
+          keyStyle={customKeyStyle}
+          specialKeyStyle={customSpecialKeyStyle}
         />
     </div>
   );

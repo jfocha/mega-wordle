@@ -1,7 +1,7 @@
 .word-row {
   display: flex;
   justify-content: center;
-  margin: 5px;
+  margin: 0px;
 }
 
 .letter {
@@ -14,9 +14,10 @@
   color: white;
   font-weight: bold;
   font-size: 1.2em;
+  border: 2px solid black;
 }
 .letter.try {
-  background-color: turquoise;
+  color: black;
 }
 
 .correct {
@@ -34,6 +35,42 @@
 .invalid {
   background-color: #ff6b6b;
   animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.game-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 10px;
+}
+
+.next-level-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.next-level-button:hover {
+  background-color: #45a049;
+}
+
+.restart-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.restart-button:hover {
+  background-color: #d32f2f;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 @keyframes shake {

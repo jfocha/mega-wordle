@@ -1,54 +1,10 @@
-.key-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 8px;
-}
-
-.keys {
-  font-size: 1rem;
-  font-weight: bold;
-  padding: 10px;
-  margin: 2px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-/* Default state */
-.keys {
-  background-color: #d3d6da;
-  color: #1a1a1b;
-}
-
-/* Hover state */
-.keys:hover {
-  background-color: #878a8c;
-}
-
-/* Correct state */
-.keys.correct {
-  background-color: #6aaa64;
-  color: white;
-}
-
-/* Present state */
-.keys.present {
-  background-color: #c9b458;
-  color: white;
-}
-
-/* Absent state */
-.keys.absent {
-  background-color: #787c7e;
-  color: white;
-}
-
 .keyboard {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 20px 0 20px 0;
+  position: fixed;
+  bottom: 0;
 }
 
 .key-row {
@@ -57,13 +13,33 @@
   margin-bottom: 8px;
 }
 
-.keys.special {
-  font-size: 0.8rem;
-  padding: 10px 15px;
-  background-color: #818384;
-  color: white;
+.keys {
+  transition: all 0.2s ease;
 }
 
-.keys.special:hover {
-  background-color: #6e7071;
+.keys:hover {
+  opacity: 0.8;
+}
+
+.keys.correct {
+  background-color: #6aaa64 !important;
+  color: white !important;
+}
+
+.keys.present {
+  background-color: #c9b458 !important;
+  color: white !important;
+}
+
+.keys.absent {
+  background-color: #787c7e !important;
+  color: white !important;
+}
+
+.keys.letter {
+  flex: 0 0 auto;
+}
+
+.keys.special {
+  flex: 1 0 auto;
 }
