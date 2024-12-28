@@ -1,13 +1,69 @@
+.key-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
 .keys {
-    width: 20px;
-    height: 40px;
-    border: 1px solid black;
-    border-radius: 4px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    margin: 2px;
-    color: black;
-    font-weight: bold;
-    font-size: 1.2em;
-  }
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 10px;
+  margin: 2px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Default state */
+.keys {
+  background-color: #d3d6da;
+  color: #1a1a1b;
+}
+
+/* Hover state */
+.keys:hover {
+  background-color: #878a8c;
+}
+
+/* Correct state */
+.keys.correct {
+  background-color: #6aaa64;
+  color: white;
+}
+
+/* Present state */
+.keys.present {
+  background-color: #c9b458;
+  color: white;
+}
+
+/* Absent state */
+.keys.absent {
+  background-color: #787c7e;
+  color: white;
+}
+
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.key-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.keys.special {
+  font-size: 0.8rem;
+  padding: 10px 15px;
+  background-color: #818384;
+  color: white;
+}
+
+.keys.special:hover {
+  background-color: #6e7071;
+}

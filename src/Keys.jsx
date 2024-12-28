@@ -2,46 +2,77 @@
 import React, { useMemo } from "react";
 import "./Keys.css";
 
-const keys = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M'];
+const keys = [
+  ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+  ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
+  ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "⌫"],
+];
 
 const getLetterStatus = (letter, guesses, targetWord) => {
-    if (guesses.some(guess => guess.includes(letter))) {
-        // Check if the letter is in the correct position in any guess
-        if (guesses.some((guess, guessIndex) => 
-            guess.split("").some((guessLetter, letterIndex) => 
-                guessLetter === letter && guessLetter === targetWord[letterIndex]
-            )
-        )) {
-            return "correct";
-        } else if (targetWord.includes(letter)) {
-            return "present";
-        } else {
-            return "absent";
-        }
+  if (guesses.some((guess) => guess.includes(letter))) {
+    // Check if the letter is in the correct position in any guess
+    if (
+      guesses.some((guess, guessIndex) =>
+        guess
+          .split("")
+          .some(
+            (guessLetter, letterIndex) =>
+              guessLetter === letter && guessLetter === targetWord[letterIndex]
+          )
+      )
+    ) {
+      return "correct";
+    } else if (targetWord.includes(letter)) {
+      return "present";
+    } else {
+      return "absent";
     }
-    return "untried";
+  }
+  return "";
 };
 
-const Keys = React.memo(({ guesses, targetWord }) => {
+const Keys = React.memo(
+  ({ guesses, targetWord, onKeyClick, onEnter, onBackspace }) => {
     const keyStatuses = useMemo(() => {
-      return keys.map(key => ({
-        key,
-        status: getLetterStatus(key, guesses, targetWord)
+      return keys.flat().map((letter) => ({
+        letter,
+        status: ["ENTER", "⌫"].includes(letter)
+          ? "special"
+          : getLetterStatus(letter, guesses, targetWord),
       }));
     }, [guesses, targetWord]);
-  
+
+    const handleKeyClick = (letter) => {
+      if (letter === "ENTER") {
+        onEnter();
+      } else if (letter === "⌫") {
+        onBackspace();
+      } else {
+        onKeyClick(letter);
+      }
+    };
+
     return (
-      <div className="key-row">
-        {keyStatuses.map(({ key, status }) => (
-          <span
-            key={key}
-            className={`keys ${status}`}
-          >   
-            {key}
-          </span>
+      <div className="keyboard">
+        {keys.map((row, rowIndex) => (
+          <div key={rowIndex} className="key-row">
+            {row.map((letter) => {
+              const keyStatus = keyStatuses.find((k) => k.letter === letter);
+              return (
+                <button
+                  key={letter}
+                  className={`keys ${keyStatus.status}`}
+                  onClick={() => handleKeyClick(letter)}
+                >
+                  {letter}
+                </button>
+              );
+            })}
+          </div>
         ))}
       </div>
     );
-  });
+  }
+);
 
 export default Keys;

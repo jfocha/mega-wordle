@@ -25,12 +25,11 @@ const App = () => {
   const level = useMemo(() => currentLevelIndex + 1, [currentLevelIndex]);
   const maxAttempts = useMemo(() => targetWord ? 11 - targetWord.length : 0, [targetWord]);
 
-  const handleKeyDown = useCallback((event) => {
-    if (event.keyCode === 13) {
-      if (currentGuess.length !== targetWord.length) return;
-      if (isWordInList(currentGuess)) {
-        const updatedGuesses = [...guesses, currentGuess];
-        setGuesses(updatedGuesses);
+  const handleGuess = useCallback(() => {
+    if (currentGuess.length !== targetWord.length) return;
+    if (isWordInList(currentGuess)) {
+      const updatedGuesses = [...guesses, currentGuess];
+      setGuesses(updatedGuesses);
       if (currentGuess === targetWord) {
         setIsGameOver(true);
         if (level === 5) {
@@ -46,9 +45,29 @@ const App = () => {
       setIsInvalidGuess(true);
       setTimeout(() => setIsInvalidGuess(false), 1000);
     }
-    }
   }, [currentGuess, targetWord, guesses, level, streak, maxAttempts]);
-console.log(pickedWords)
+
+  const handleKeyDown = useCallback((event) => {
+    if (isGameOver) return;
+
+    if (event.key === 'Enter') {
+      handleGuess();
+    } else if (event.key === 'Backspace') {
+      setCurrentGuess(prev => prev.slice(0, -1));
+    } else if (/^[A-Za-z]$/.test(event.key)) {
+      if (currentGuess.length < targetWord.length) {
+        setCurrentGuess(prev => prev + event.key.toUpperCase());
+      }
+    }
+  }, [currentGuess, targetWord.length, isGameOver, handleGuess]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
+  
   const nextLevel = useCallback(() => {
     if (currentLevelIndex < targetWord.length - 1) {
       setCurrentLevelIndex(currentLevelIndex + 1);
@@ -70,6 +89,17 @@ console.log(pickedWords)
     }
   }, [level]);
 
+  const handleKeyClick = useCallback((letter) => {
+    if (currentGuess.length < targetWord.length && !isGameOver) {
+      setCurrentGuess(prev => prev + letter);
+    }
+  }, [currentGuess, targetWord.length, isGameOver]);
+
+  const handleBackspace = useCallback(() => {
+    setCurrentGuess(prev => prev.slice(0, -1));
+  }, []);
+
+  console.log(pickedWords)
   return (
     <div className="main-container">
       <h1>Mega Wordle</h1>
@@ -84,19 +114,6 @@ console.log(pickedWords)
       {!isGameOver && (
         <div className="wrapper">
           <Row guess={currentGuess} targetWord="" className={isInvalidGuess ? 'invalid' : ''} />
-          <input
-            type="text"
-            value={currentGuess}
-            onChange={(e) => setCurrentGuess(e.target.value.toUpperCase())}
-            onKeyDown={handleKeyDown}
-            maxLength={targetWord.length}
-            onBlur={(e) => {
-              if (e.relatedTarget === null) {
-                e.target.focus();
-              }
-            }}
-            autoFocus
-          />
         </div>
       )}
       {isGameOver && (
@@ -111,7 +128,7 @@ console.log(pickedWords)
                 <button onClick={restartGame}>Restart Game</button>
               </>
             ) : (
-            <button onClick={nextLevel}>Next Level</button>
+              <button onClick={nextLevel}>Next Level</button>
             )
           ) : (
             <>
@@ -121,9 +138,13 @@ console.log(pickedWords)
           )}
         </>
       )}
-      <div className="keyboard">
-        <Keys guesses={guesses} targetWord={targetWord} />
-      </div>
+        <Keys 
+          guesses={guesses} 
+          targetWord={targetWord} 
+          onKeyClick={handleKeyClick}
+          onEnter={handleGuess}
+          onBackspace={handleBackspace}
+        />
     </div>
   );
 };
