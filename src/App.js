@@ -162,7 +162,12 @@ const App = () => {
       </div>
       {!isGameOver && (
         <>
-          <Row guess={currentGuess} targetWord="" className={isInvalidGuess ? 'invalid' : ''} />
+          <Row 
+            guess={currentGuess} 
+            targetWord={targetWord} 
+            className={isInvalidGuess ? 'invalid' : ''} 
+            isInput={true}
+          />
         </>
       )}
       {isGameOver && (

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import "./Row.css";
 
 const getLetterStatus = (letter, index, targetWord) => {
@@ -12,23 +12,22 @@ const getLetterStatus = (letter, index, targetWord) => {
   }
 };
 
-const Row = React.memo(({ guess, targetWord, className = "", isInput }) => {
-  const letters = useMemo(() => {
-    return guess.split("").map((letter, index) => ({
+const Row = ({ guess, targetWord, className = "", isInput }) => {
+  const letters = guess.split('').concat(Array(targetWord.length - guess.length).fill('')).map((letter, index) => ({
       letter,
       status: getLetterStatus(letter, index, targetWord),
     }));
-  }, [guess, targetWord]);
 
   return (
-    <div className={`word-row ${className}`}>
+    <div className={`row ${className} ${isInput ? 'input-row' : ''}`}>
+      {}
       {letters.map(({ letter, status }, index) => (
-        <span key={index} className={`letter ${status}`}>
+        <span key={index} className={`tile ${status} ${isInput ? 'input-tile' : ''}`}>
           {letter}
         </span>
       ))}
     </div>
   );
-});
+};
 
 export default Row;

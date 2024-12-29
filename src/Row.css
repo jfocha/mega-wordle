@@ -1,10 +1,10 @@
-.word-row {
+.row {
   display: flex;
   justify-content: center;
   margin: 0px;
 }
 
-.letter {
+.tile {
   width: 40px;
   height: 40px;
   display: inline-flex;
@@ -31,12 +31,12 @@
 .absent {
   background-color: darkgray;
 }
-
+/*
 .invalid {
   background-color: #ff6b6b;
   animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
-
+*/
 .game-button {
   padding: 10px 20px;
   font-size: 1rem;
@@ -72,7 +72,29 @@
   justify-content: center;
   margin-top: 20px;
 }
+.input-row .input-tile {
+  color: black;
+  border: 2px solid #878a8c;
+  background-color: #ffffff;
+  animation: pulse 1.5s infinite;
+}
 
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(135, 138, 140, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(135, 138, 140, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(135, 138, 140, 0);
+  }
+}
+
+.invalid .input-tile {
+  border-color: #ff0000;
+  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+}
 @keyframes shake {
   10%,
   90% {
