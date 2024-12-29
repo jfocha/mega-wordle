@@ -12,36 +12,56 @@ const App = () => {
   const [isInvalidGuess, setIsInvalidGuess] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [streak, setStreak] = useState(0);
-
-  
+  const [isSaved, setIsSaved] = useState(false);
+  const [flippedLetters, setFlippedLetters] = useState([]);
 
   useEffect(() => {
     setPickedWords(generateNewWords());
+    // Persistent streak
     const savedStreak = localStorage.getItem('megaWordleStreak');
     if (savedStreak) {
       setStreak(parseInt(savedStreak, 10));
     }
-    const timer = setTimeout(() => {
-      const cards = document.querySelectorAll('.card-wrapper');
-      cards.forEach((card, index) => {
-        setTimeout(() => {
-          card.classList.add('flip-down');
-        }, index * 100);
-      });
-    }, 500);  // Delay the start of the animation by 500ms
-  
+    // Load saved game state
+    const savedState = localStorage.getItem('megaWordleState');
+    if (savedState) {
+      const parsedState = JSON.parse(savedState);
+      setPickedWords(parsedState.pickedWords);
+      setCurrentLevelIndex(parsedState.currentLevelIndex);
+      setGuesses(parsedState.guesses);
+      setCurrentGuess(parsedState.currentGuess);
+      setIsGameOver(parsedState.isGameOver);
+      setStreak(parsedState.streak);
+    } else {
+      setPickedWords(generateNewWords());
+    }
+    // Timer for title
+    const title = "MEGAWORDLE";
+    let timer;
+
+    const flipNextLetter = (index) => {
+      if (index < title.length) {
+        setFlippedLetters(prev => [...prev, index]);
+        timer = setTimeout(() => flipNextLetter(index + 1), 200); // 200ms delay between each letter
+      }
+    };
+
+    flipNextLetter(0);
+
     return () => clearTimeout(timer);
   }, []);
 
   const targetWord = useMemo(() => pickedWords[currentLevelIndex] || '', [pickedWords, currentLevelIndex]);
   const level = useMemo(() => currentLevelIndex + 1, [currentLevelIndex]);
   const maxAttempts = useMemo(() => targetWord ? 11 - targetWord.length : 0, [targetWord]);
+  const [remainingGuesses, setRemainingGuesses] = useState(8 - level);
 
   const handleGuess = useCallback(() => {
     if (currentGuess.length !== targetWord.length) return;
     if (isWordInList(currentGuess)) {
       const updatedGuesses = [...guesses, currentGuess];
       setGuesses(updatedGuesses);
+      setRemainingGuesses(prevGuesses => prevGuesses - 1);
       if (currentGuess === targetWord) {
         setIsGameOver(true);
         if (level === 5) {
@@ -80,21 +100,23 @@ const App = () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleKeyDown]);
-  
+
   const nextLevel = useCallback(() => {
     if (currentLevelIndex < targetWord.length - 1) {
       setCurrentLevelIndex(currentLevelIndex + 1);
       setGuesses([]);
       setCurrentGuess("");
+      setRemainingGuesses(7 - level);
       setIsGameOver(false);
     }
-  }, [currentLevelIndex, targetWord.length]);
+  }, [currentLevelIndex, targetWord.length, level]);
 
   const restartGame = useCallback(() => {
     setPickedWords(generateNewWords());
     setCurrentLevelIndex(0);
     setGuesses([]);
     setCurrentGuess("");
+    setRemainingGuesses(8 - level);
     setIsGameOver(false);
     if (level < 5) {
       setStreak(0);
@@ -111,6 +133,25 @@ const App = () => {
   const handleBackspace = useCallback(() => {
     setCurrentGuess(prev => prev.slice(0, -1));
   }, []);
+
+  const saveGame = useCallback(() => {
+    const gameState = {
+      pickedWords,
+      currentLevelIndex,
+      guesses,
+      currentGuess,
+      isGameOver,
+      streak
+    };
+    localStorage.setItem('megaWordleState', JSON.stringify(gameState));
+    setIsSaved(true);
+    setTimeout(() => setIsSaved(false), 2000); // Reset saved message after 2 seconds
+  }, [pickedWords, currentLevelIndex, guesses, currentGuess, isGameOver, streak]);
+
+  const clearSavedGame = useCallback(() => {
+    localStorage.removeItem('megaWordleState');
+    restartGame();
+  }, [restartGame]);
 
   const customKeyStyle = {
     width: '27px',
@@ -143,16 +184,31 @@ const App = () => {
   return (
     <div className="main-container">
       <div className="title-wrapper">
-      {"MEGA WORDLE".split('').map((letter, index) => (
-        <div key={index} className="card-wrapper flip-down" style={{animationDelay: `${index * 0.1}s`}}>
-          <div className="card">
-            <div className="front">{letter}</div>
-            <div className="back">{letter}</div>
-          </div>
+        <div className="title-line">
+          {["M", "E", "G", "A"].map((letter, index) => (
+            <div key={index} className={`card-wrapper ${flippedLetters.includes(index) ? 'flip-down' : ''}`}>
+              <div className="card">
+                <div className="front">{letter}</div>
+                <div className="back">{letter}</div>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+        <div className="title-line">
+          {["W", "O", "R", "D", "L", "E"].map((letter, index) => (
+            <div key={index + 4} className={`card-wrapper ${flippedLetters.includes(index + 4) ? 'flip-down' : ''}`}>
+              <div className="card">
+                <div className="front">{letter}</div>
+                <div className="back">{letter}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
       <h2>Level {level}</h2>
+      <div className="guesses-remaining">
+    Guesses Remaining: {!isGameOver && remainingGuesses}
+  </div>
       <div className="guesses">
         {guesses.map((guess, index) => (
           <div key={index}>
@@ -162,10 +218,10 @@ const App = () => {
       </div>
       {!isGameOver && (
         <>
-          <Row 
-            guess={currentGuess} 
-            targetWord={targetWord} 
-            className={isInvalidGuess ? 'invalid' : ''} 
+          <Row
+            guess={currentGuess}
+            targetWord={targetWord}
+            className={isInvalidGuess ? 'invalid' : ''}
             isInput={true}
           />
         </>
@@ -179,7 +235,7 @@ const App = () => {
               <>
                 <h4>You Win!</h4>
                 <p>Streak: {streak}</p>
-                <button 
+                <button
                   onClick={restartGame}
                   className="game-button restart-button"
                 >
@@ -187,9 +243,9 @@ const App = () => {
                 </button>
               </>
             ) : (
-              <button 
+              <button
                 onClick={nextLevel}
-                className="game-button next-level-button" 
+                className="game-button next-level-button"
               >
                 Next Level
               </button>
@@ -197,7 +253,7 @@ const App = () => {
           ) : (
             <>
               <p>Streak ended at: {streak}</p>
-              <button 
+              <button
                 onClick={restartGame}
                 className="game-button restart-button"
               >
@@ -207,15 +263,26 @@ const App = () => {
           )}
         </>
       )}
-        <Keys 
-          guesses={guesses} 
-          targetWord={targetWord} 
-          onKeyClick={handleKeyClick}
-          onEnter={handleGuess}
-          onBackspace={handleBackspace}
-          keyStyle={customKeyStyle}
-          specialKeyStyle={customSpecialKeyStyle}
-        />
+      {!isGameOver && (
+      <Keys
+        guesses={guesses}
+        targetWord={targetWord}
+        onKeyClick={handleKeyClick}
+        onEnter={handleGuess}
+        onBackspace={handleBackspace}
+        keyStyle={customKeyStyle}
+        specialKeyStyle={customSpecialKeyStyle}
+      />
+      )}
+      <div className="game-controls">
+        <button onClick={saveGame} className="game-button save-button">
+          Save Game
+        </button>
+        <button onClick={clearSavedGame} className="game-button clear-button">
+          Clear Saved Game
+        </button>
+      </div>
+      {isSaved && <p className="save-message">Game saved successfully!</p>}
     </div>
   );
 };
