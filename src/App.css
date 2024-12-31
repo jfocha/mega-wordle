@@ -142,3 +142,17 @@ p {
   text-align: center;
   margin-top: 10px;
 }
+
+.empty-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.empty-tile {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #d3d6da;
+  margin: 0 2px;
+  display: inline-block;
+}

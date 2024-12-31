@@ -42,7 +42,7 @@ const App = () => {
     const flipNextLetter = (index) => {
       if (index < title.length) {
         setFlippedLetters(prev => [...prev, index]);
-        timer = setTimeout(() => flipNextLetter(index + 1), 200); // 200ms delay between each letter
+        timer = setTimeout(() => flipNextLetter(index + 1), 500); // 200ms delay between each letter
       }
     };
 
@@ -153,6 +153,17 @@ const App = () => {
     restartGame();
   }, [restartGame]);
 
+  const renderEmptyTiles = useCallback(() => {
+    const emptyRows = remainingGuesses - (isGameOver ? 0 : 1); // Subtract 1 for the current input row if the game is not over
+    return Array(emptyRows).fill().map((_, rowIndex) => (
+      <div key={`empty-row-${rowIndex}`} className="empty-row">
+        {Array(targetWord.length).fill().map((_, colIndex) => (
+          <div key={`empty-tile-${rowIndex}-${colIndex}`} className="empty-tile"></div>
+        ))}
+      </div>
+    ));
+  }, [remainingGuesses, isGameOver, targetWord.length]);
+
   const customKeyStyle = {
     width: '27px',
     height: '35px',
@@ -206,9 +217,6 @@ const App = () => {
         </div>
       </div>
       <h2>Level {level}</h2>
-      <div className="guesses-remaining">
-    Guesses Remaining: {!isGameOver && remainingGuesses}
-  </div>
       <div className="guesses">
         {guesses.map((guess, index) => (
           <div key={index}>
@@ -217,15 +225,14 @@ const App = () => {
         ))}
       </div>
       {!isGameOver && (
-        <>
           <Row
             guess={currentGuess}
             targetWord={targetWord}
             className={isInvalidGuess ? 'invalid' : ''}
             isInput={true}
           />
-        </>
       )}
+      {renderEmptyTiles()}
       {isGameOver && (
         <>
           <h3>Correct answer:</h3>
