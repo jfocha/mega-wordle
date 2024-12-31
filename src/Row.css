@@ -1,9 +1,11 @@
+/* Row Layout */
 .row {
   display: flex;
   justify-content: center;
   margin: 0px;
 }
 
+/* Tile Styles */
 .tile {
   width: 40px;
   height: 40px;
@@ -15,11 +17,10 @@
   font-weight: bold;
   font-size: 1.2em;
   border: 2px solid black;
-}
-.letter.try {
-  color: black;
+  transition: background-color 0.5s ease;
 }
 
+/* Tile Status Colors */
 .correct {
   background-color: green;
 }
@@ -31,86 +32,64 @@
 .absent {
   background-color: darkgray;
 }
-/*
-.invalid {
-  background-color: #ff6b6b;
-  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-}
-*/
-.game-button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin: 10px;
+
+/* Tile Flip Animation */
+@keyframes flip {
+  0% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
 }
 
-.next-level-button {
-  background-color: #4CAF50;
-  color: white;
+.tile.flip {
+  animation: flip 0.7s ease forwards;
 }
 
-.next-level-button:hover {
-  background-color: #45a049;
-}
-
-.restart-button {
-  background-color: #f44336;
-  color: white;
-}
-
-.restart-button:hover {
-  background-color: #d32f2f;
-}
-
-.button-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-.input-row .input-tile {
+/* Input Tile Styles */
+.row .input,
+.tile .input {
   color: black;
   border: 2px solid #878a8c;
   background-color: #ffffff;
   animation: pulse 1.5s infinite;
 }
 
+/* Input Tile Pulse Animation */
 @keyframes pulse {
   0% {
     box-shadow: 0 0 0 0 rgba(135, 138, 140, 0.7);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(135, 138, 140, 0);
+    box-shadow: 0 0 0 6px rgba(135, 138, 140, 0);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(135, 138, 140, 0);
   }
 }
 
-.invalid .input-tile {
+/* Invalid Input Styles */
+.invalid .input {
   border-color: #ff0000;
   animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
 }
+
+/* Invalid Input Shake Animation */
 @keyframes shake {
-  10%,
-  90% {
+  10%, 90% {
     transform: translate3d(-1px, 0, 0);
   }
-  20%,
-  80% {
+  20%, 80% {
     transform: translate3d(2px, 0, 0);
   }
-  30%,
-  50%,
-  70% {
+  30%, 50%, 70% {
     transform: translate3d(-4px, 0, 0);
   }
-  40%,
-  60% {
+  40%, 60% {
     transform: translate3d(4px, 0, 0);
   }
 }

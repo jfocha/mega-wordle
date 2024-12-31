@@ -1,3 +1,4 @@
+/* Keyboard Layout */
 .keyboard {
   display: flex;
   flex-direction: column;
@@ -5,6 +6,12 @@
   margin: 20px 0 60px 0;
   position: fixed;
   bottom: 40px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 500px; /* Limit maximum width on larger screens */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .key-row {
@@ -13,33 +20,80 @@
   margin-bottom: 8px;
 }
 
+/* Key Styles */
 .keys {
   transition: all 0.2s ease;
+  padding: 10px;
+  margin: 2px;
+  border-radius: 4px;
+  font-size: 1rem;
+  min-width: 30px;
+  text-align: center;
 }
 
 .keys:hover {
   opacity: 0.8;
 }
 
+/* Key Status Colors */
 .keys.correct {
-  background-color: #6aaa64 !important;
+  background-color: #6aaa64 !important; /* Green for correct letters */
   color: white !important;
 }
 
 .keys.present {
-  background-color: #c9b458 !important;
+  background-color: #c9b458 !important; /* Yellow for present letters */
   color: white !important;
 }
 
 .keys.absent {
-  background-color: #787c7e !important;
+  background-color: #787c7e !important; /* Gray for absent letters */
   color: white !important;
 }
 
+/* Key Sizes */
 .keys.letter {
-  flex: 0 0 auto;
+  flex: 0 0 auto; /* Fixed size for letter keys */
 }
 
 .keys.special {
-  flex: 1 0 auto;
+  flex: 1 0 auto; /* Flexible size for special keys (Enter, Backspace) */
+}
+
+/* Media Queries for Responsive Design */
+@media screen and (max-width: 480px) {
+  .keyboard {
+    bottom: 100px;
+  }
+
+  .keys {
+    padding: 8px;
+    font-size: 0.9rem;
+    min-width: 25px;
+  }
+}
+
+@media screen and (max-height: 600px) and (orientation: landscape) {
+  .keyboard {
+    position: static;
+    margin: 10px 0;
+  }
+
+  .keys {
+    padding: 6px;
+    font-size: 0.8rem;
+    min-width: 20px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .keyboard {
+    bottom: 60px;
+  }
+
+  .keys {
+    padding: 12px;
+    font-size: 1.1rem;
+    min-width: 35px;
+  }
 }

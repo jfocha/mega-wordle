@@ -1,23 +1,26 @@
+// Import necessary React hooks and components
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import "./App.css";
 import Row from "./Row.jsx";
 import Keys from "./Keys.jsx";
+// Import utility functions for word generation and validation
 import { generateNewWords, isWordInList } from './words.js';
 
 const App = () => {
-  const [pickedWords, setPickedWords] = useState([]);
-  const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
-  const [guesses, setGuesses] = useState([]);
-  const [currentGuess, setCurrentGuess] = useState("");
-  const [isInvalidGuess, setIsInvalidGuess] = useState(false);
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [streak, setStreak] = useState(0);
-  const [isSaved, setIsSaved] = useState(false);
-  const [flippedLetters, setFlippedLetters] = useState([]);
+  // State variables
+  const [pickedWords, setPickedWords] = useState([]); // Array of words for each level
+  const [currentLevelIndex, setCurrentLevelIndex] = useState(0); // Current level index
+  const [guesses, setGuesses] = useState([]); // Array of user guesses
+  const [currentGuess, setCurrentGuess] = useState(""); // Current user input
+  const [isInvalidGuess, setIsInvalidGuess] = useState(false); // Flag for invalid guess
+  const [isGameOver, setIsGameOver] = useState(false); // Flag for game over state
+  const [streak, setStreak] = useState(0); // User's winning streak
+  const [isSaved, setIsSaved] = useState(false); // Flag for game save status
+  const [flippedLetters, setFlippedLetters] = useState([]); // State for title animation
 
   useEffect(() => {
-    setPickedWords(generateNewWords());
-    // Persistent streak
+    setPickedWords(generateNewWords()); // Initialize game with new words
+    // Load persistent streak from local storage
     const savedStreak = localStorage.getItem('megaWordleStreak');
     if (savedStreak) {
       setStreak(parseInt(savedStreak, 10));
@@ -42,7 +45,7 @@ const App = () => {
     const flipNextLetter = (index) => {
       if (index < title.length) {
         setFlippedLetters(prev => [...prev, index]);
-        timer = setTimeout(() => flipNextLetter(index + 1), 500); // 200ms delay between each letter
+        timer = setTimeout(() => flipNextLetter(index + 1), 500); // 500ms delay between each letter
       }
     };
 
@@ -50,111 +53,125 @@ const App = () => {
 
     return () => clearTimeout(timer);
   }, []);
+// Memoized values to optimize performance
+const targetWord = useMemo(() => pickedWords[currentLevelIndex] || '', [pickedWords, currentLevelIndex]);
+const level = useMemo(() => currentLevelIndex + 1, [currentLevelIndex]);
+const maxAttempts = useMemo(() => targetWord ? 11 - targetWord.length : 0, [targetWord]);
+const [remainingGuesses, setRemainingGuesses] = useState(7);
 
-  const targetWord = useMemo(() => pickedWords[currentLevelIndex] || '', [pickedWords, currentLevelIndex]);
-  const level = useMemo(() => currentLevelIndex + 1, [currentLevelIndex]);
-  const maxAttempts = useMemo(() => targetWord ? 11 - targetWord.length : 0, [targetWord]);
-  const [remainingGuesses, setRemainingGuesses] = useState(8 - level);
-
-  const handleGuess = useCallback(() => {
-    if (currentGuess.length !== targetWord.length) return;
-    if (isWordInList(currentGuess)) {
-      const updatedGuesses = [...guesses, currentGuess];
-      setGuesses(updatedGuesses);
-      setRemainingGuesses(prevGuesses => prevGuesses - 1);
-      if (currentGuess === targetWord) {
-        setIsGameOver(true);
-        if (level === 5) {
-          const newStreak = streak + 1;
-          setStreak(newStreak);
-          localStorage.setItem('megaWordleStreak', newStreak.toString());
-        }
-      } else if (updatedGuesses.length >= maxAttempts) {
-        setIsGameOver(true);
+// Handle user's guess submission
+const handleGuess = useCallback(() => {
+  if (currentGuess.length !== targetWord.length) return;
+  if (isWordInList(currentGuess)) {
+    const updatedGuesses = [...guesses, currentGuess];
+    setGuesses(updatedGuesses);
+    setRemainingGuesses(prevGuesses => prevGuesses - 1);
+    if (currentGuess === targetWord) {
+      setIsGameOver(true);
+      if (level === 5) {
+        // Update streak if player wins the final level
+        const newStreak = streak + 1;
+        setStreak(newStreak);
+        localStorage.setItem('megaWordleStreak', newStreak.toString());
       }
-      setCurrentGuess("");
-      document.activeElement.blur();
-    } else {
-      setIsInvalidGuess(true);
-      setTimeout(() => setIsInvalidGuess(false), 1000);
+    } else if (updatedGuesses.length >= maxAttempts) {
+      setIsGameOver(true);
     }
-  }, [currentGuess, targetWord, guesses, level, streak, maxAttempts]);
+    setCurrentGuess("");
+    document.activeElement.blur();
+  } else {
+    // Handle invalid guess
+    setIsInvalidGuess(true);
+    setTimeout(() => setIsInvalidGuess(false), 1000);
+  }
+}, [currentGuess, targetWord, guesses, level, streak, maxAttempts]);
 
-  const handleKeyDown = useCallback((event) => {
-    if (isGameOver) return;
+// Handle keyboard input
+const handleKeyDown = useCallback((event) => {
+  if (isGameOver) return;
 
-    if (event.key === 'Enter') {
-      handleGuess();
-    } else if (event.key === 'Backspace') {
-      setCurrentGuess(prev => prev.slice(0, -1));
-    } else if (/^[A-Za-z]$/.test(event.key)) {
-      if (currentGuess.length < targetWord.length) {
-        setCurrentGuess(prev => prev + event.key.toUpperCase());
-      }
+  if (event.key === 'Enter') {
+    handleGuess();
+  } else if (event.key === 'Backspace') {
+    setCurrentGuess(prev => prev.slice(0, -1));
+  } else if (/^[A-Za-z]$/.test(event.key)) {
+    if (currentGuess.length < targetWord.length) {
+      setCurrentGuess(prev => prev + event.key.toUpperCase());
     }
-  }, [currentGuess, targetWord.length, isGameOver, handleGuess]);
+  }
+}, [currentGuess, targetWord.length, isGameOver, handleGuess]);
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [handleKeyDown]);
+// Add and remove keyboard event listener
+useEffect(() => {
+  window.addEventListener('keydown', handleKeyDown);
+  return () => {
+    window.removeEventListener('keydown', handleKeyDown);
+  };
+}, [handleKeyDown]);
 
-  const nextLevel = useCallback(() => {
-    if (currentLevelIndex < targetWord.length - 1) {
-      setCurrentLevelIndex(currentLevelIndex + 1);
-      setGuesses([]);
-      setCurrentGuess("");
-      setRemainingGuesses(7 - level);
-      setIsGameOver(false);
-    }
-  }, [currentLevelIndex, targetWord.length, level]);
-
-  const restartGame = useCallback(() => {
-    setPickedWords(generateNewWords());
-    setCurrentLevelIndex(0);
+// Move to the next level
+const nextLevel = useCallback(() => {
+  if (currentLevelIndex < targetWord.length - 1) {
+    setCurrentLevelIndex(currentLevelIndex + 1);
     setGuesses([]);
     setCurrentGuess("");
-    setRemainingGuesses(8 - level);
+    setRemainingGuesses(7 - level);
     setIsGameOver(false);
-    if (level < 5) {
-      setStreak(0);
-      localStorage.setItem('megaWordleStreak', '0');
-    }
-  }, [level]);
+  }
+}, [currentLevelIndex, targetWord.length, level]);
 
-  const handleKeyClick = useCallback((letter) => {
-    if (currentGuess.length < targetWord.length && !isGameOver) {
-      setCurrentGuess(prev => prev + letter);
-    }
-  }, [currentGuess, targetWord.length, isGameOver]);
+// Restart the game
+const restartGame = useCallback(() => {
+  setPickedWords(generateNewWords());
+  setCurrentLevelIndex(0);
+  setGuesses([]);
+  setCurrentGuess("");
+  setRemainingGuesses(7);
+  setIsGameOver(false);
+  if (level < 5) {
+    setStreak(0);
+    localStorage.setItem('megaWordleStreak', '0');
+  }
+}, [level]);
 
-  const handleBackspace = useCallback(() => {
-    setCurrentGuess(prev => prev.slice(0, -1));
-  }, []);
+// Handle on-screen keyboard key clicks
+const handleKeyClick = useCallback((letter) => {
+  if (currentGuess.length < targetWord.length && !isGameOver) {
+    setCurrentGuess(prev => prev + letter);
+  }
+}, [currentGuess, targetWord.length, isGameOver]);
 
-  const saveGame = useCallback(() => {
-    const gameState = {
-      pickedWords,
-      currentLevelIndex,
-      guesses,
-      currentGuess,
-      isGameOver,
-      streak
-    };
-    localStorage.setItem('megaWordleState', JSON.stringify(gameState));
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 2000); // Reset saved message after 2 seconds
-  }, [pickedWords, currentLevelIndex, guesses, currentGuess, isGameOver, streak]);
+// Handle backspace for on-screen keyboard
+const handleBackspace = useCallback(() => {
+  setCurrentGuess(prev => prev.slice(0, -1));
+}, []);
 
+// Save the current game state
+const saveGame = useCallback(() => {
+  const gameState = {
+    pickedWords,
+    currentLevelIndex,
+    guesses,
+    currentGuess,
+    isGameOver,
+    streak
+  };
+  localStorage.setItem('megaWordleState', JSON.stringify(gameState));
+  setIsSaved(true);
+  setTimeout(() => setIsSaved(false), 2000); // Reset saved message after 2 seconds
+}, [pickedWords, currentLevelIndex, guesses, currentGuess, isGameOver, streak]);
+
+  // Function to clear the saved game state and restart the game
   const clearSavedGame = useCallback(() => {
     localStorage.removeItem('megaWordleState');
     restartGame();
   }, [restartGame]);
 
+  // Function to render empty tiles for remaining guesses
   const renderEmptyTiles = useCallback(() => {
+    // Calculate the number of empty rows to render
     const emptyRows = remainingGuesses - (isGameOver ? 0 : 1); // Subtract 1 for the current input row if the game is not over
+    // Create an array of empty rows
     return Array(emptyRows).fill().map((_, rowIndex) => (
       <div key={`empty-row-${rowIndex}`} className="empty-row">
         {Array(targetWord.length).fill().map((_, colIndex) => (
@@ -164,6 +181,7 @@ const App = () => {
     ));
   }, [remainingGuesses, isGameOver, targetWord.length]);
 
+  // Custom style for keyboard keys
   const customKeyStyle = {
     width: '27px',
     height: '35px',
@@ -182,6 +200,7 @@ const App = () => {
     alignItems: 'center',
   };
 
+  // Custom style for special keyboard keys (e.g., Enter, Backspace)
   const customSpecialKeyStyle = {
     ...customKeyStyle,
     width: 'auto',
@@ -191,7 +210,6 @@ const App = () => {
     fontSize: '0.8rem',
   };
 
-  console.log(pickedWords)
   return (
     <div className="main-container">
       <div className="title-wrapper">
@@ -220,23 +238,26 @@ const App = () => {
       <div className="guesses">
         {guesses.map((guess, index) => (
           <div key={index}>
-            <Row guess={guess} targetWord={targetWord} />
+            <Row guess={guess} targetWord={targetWord} isInput={false} />
           </div>
         ))}
       </div>
       {!isGameOver && (
-          <Row
-            guess={currentGuess}
-            targetWord={targetWord}
-            className={isInvalidGuess ? 'invalid' : ''}
-            isInput={true}
-          />
+        <Row
+          guess={currentGuess}
+          targetWord={targetWord}
+          className={isInvalidGuess ? 'invalid' : ''}
+          isInput={true}
+        />
       )}
       {renderEmptyTiles()}
+      <div className="game-controls">
       {isGameOver && (
         <>
           <h3>Correct answer:</h3>
-          <Row guess={targetWord} targetWord={targetWord} />
+          <div className="answer">
+            <Row guess={targetWord} targetWord={targetWord} />
+          </div>
           {(guesses[guesses.length - 1] === targetWord) ? (
             (level === 5) ? (
               <>
@@ -271,17 +292,17 @@ const App = () => {
         </>
       )}
       {!isGameOver && (
-      <Keys
-        guesses={guesses}
-        targetWord={targetWord}
-        onKeyClick={handleKeyClick}
-        onEnter={handleGuess}
-        onBackspace={handleBackspace}
-        keyStyle={customKeyStyle}
-        specialKeyStyle={customSpecialKeyStyle}
-      />
+        <Keys
+          guesses={guesses}
+          targetWord={targetWord}
+          onKeyClick={handleKeyClick}
+          onEnter={handleGuess}
+          onBackspace={handleBackspace}
+          keyStyle={customKeyStyle}
+          specialKeyStyle={customSpecialKeyStyle}
+        />
       )}
-      <div className="game-controls">
+      
         <button onClick={saveGame} className="game-button save-button">
           Save Game
         </button>

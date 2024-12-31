@@ -1,3 +1,4 @@
+/* Global Styles */
 body {
   margin: 0px;
   font-family: Arial, sans-serif;
@@ -5,22 +6,49 @@ body {
   background: linear-gradient(135deg, #F3E7E9, #E3EEFF);
 }
 
-p {
-  margin-bottom: 10px;
+/* Header Styles */
+h2 {
+  font-family: Arial, sans-serif;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  color: #1a1a1a;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
 }
+
+h2:hover {
+  transform: scale(1.05);
+  color: #2c3e50;
+}
+
+/* Responsive Header */
+@media (max-width: 600px) {
+  h2 {
+    font-size: 2rem;
+  }
+}
+
+/* Main Container Layout */
 .main-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
 }
+
+/* Guesses Container */
 .guesses {
   text-align: center;
   padding: 0px;
   margin: 0px;
 }
 
+/* Title Styles */
 .title-wrapper {
   display: flex;
   flex-direction: column;
@@ -38,6 +66,7 @@ p {
   margin-top: 10px;
 }
 
+/* Card Styles */
 .card-wrapper {
   perspective: 1000px;
   margin: 0 2px;
@@ -78,6 +107,7 @@ p {
   transform: rotateX(180deg);
 }
 
+/* Card Flip Animation */
 @keyframes flipDown {
   0% {
     transform: rotateX(0deg);
@@ -91,32 +121,54 @@ p {
   animation: flipDown 0.6s ease-out forwards;
 }
 
-.guesses-remaining {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
+/* Game Controls */
 .game-controls {
   display: flex;
   justify-content: center;
   position: fixed;
   bottom: 10px;
+  left: 0;
+  right: 0;
   padding: 10px;
   z-index: 1000;
 }
 
+.answer {
+  margin: 10px;
+  padding: 10px 20px;
+}
+
 .game-button {
   width: 150px;
-  margin: 0 5px;
+  margin: 10px;
   padding: 10px 20px;
-  font-size: 16px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
   cursor: pointer;
   border: none;
   border-radius: 5px;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+}
+
+.next-level-button {
+  background-color: #4CAF50;
+  color: white;
+  animation: pulse 1.5s infinite;
+}
+
+.next-level-button:hover {
+  background-color: #45a049;
+}
+
+.restart-button {
+  background-color: #f44336;
+  color: white;
+  animation: pulse 1.5s infinite;
+}
+
+.restart-button:hover {
+  background-color: #d32f2f;
 }
 
 .save-button {
@@ -134,15 +186,58 @@ p {
 }
 
 .clear-button:hover {
-  background-color: #da190b;
+  background-color: #d32f2f;
 }
 
+/* Media Queries for Responsive Design */
+@media screen and (max-width: 480px) {
+  .game-controls {
+    flex-direction: column;
+    align-items: center;
+    bottom: 40px; /* Adjust this value based on your keyboard height */
+  }
+
+  .game-button {
+    width: 80%;
+    margin: 5px 0;
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
+
+@media screen and (max-height: 600px) and (orientation: landscape) {
+  .game-controls {
+    position: static;
+    margin-top: 10px;
+  }
+
+  .game-button {
+    width: 120px;
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .game-controls {
+    bottom: 20px;
+  }
+
+  .game-button {
+    width: 180px;
+    font-size: 18px;
+    padding: 12px 24px;
+  }
+}
+
+/* Save Message */
 .save-message {
   color: #4CAF50;
   text-align: center;
   margin-top: 10px;
 }
 
+/* Empty Row and Tile Styles */
 .empty-row {
   display: flex;
   justify-content: center;

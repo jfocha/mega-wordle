@@ -1,18 +1,19 @@
-// make a keyboard that shows the letters already used.
 import React, { useMemo } from "react";
 import "./Keys.css";
 
+// Define the keyboard layout
 const keys = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
   ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
   ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "⌫"],
 ];
 
+// Function to determine the status of a letter based on previous guesses
 const getLetterStatus = (letter, guesses, targetWord) => {
   if (guesses.some((guess) => guess.includes(letter))) {
     // Check if the letter is in the correct position in any guess
     if (
-      guesses.some((guess, guessIndex) =>
+      guesses.some((guess) =>
         guess
           .split("")
           .some(
@@ -31,8 +32,10 @@ const getLetterStatus = (letter, guesses, targetWord) => {
   return "";
 };
 
+// Keys component (memoized to prevent unnecessary re-renders)
 const Keys = React.memo(
   ({ guesses, targetWord, onKeyClick, onEnter, onBackspace, keyStyle, specialKeyStyle }) => {
+    // Memoized calculation of key statuses
     const keyStatuses = useMemo(() => {
       return keys.flat().map((letter) => ({
         letter,
@@ -42,6 +45,7 @@ const Keys = React.memo(
       }));
     }, [guesses, targetWord]);
 
+    // Handle key clicks
     const handleKeyClick = (letter) => {
       if (letter === "ENTER") {
         onEnter();
@@ -52,6 +56,7 @@ const Keys = React.memo(
       }
     };
 
+    // Render the keyboard
     return (
       <div className="keyboard">
         {keys.map((row, rowIndex) => (
