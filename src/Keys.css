@@ -3,9 +3,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 20px 0 60px 0;
+  margin: 20px 0 10px 0;
   position: fixed;
-  bottom: 40px;
+  bottom: 10px;
   left: 0;
   right: 0;
   width: 100%;
@@ -63,7 +63,7 @@
 /* Media Queries for Responsive Design */
 @media screen and (max-width: 480px) {
   .keyboard {
-    bottom: 100px;
+    bottom: 10px;
   }
 
   .keys {
@@ -88,7 +88,7 @@
 
 @media screen and (min-width: 768px) {
   .keyboard {
-    bottom: 60px;
+    bottom: 20px;
   }
 
   .keys {

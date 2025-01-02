@@ -7,14 +7,14 @@ body {
 }
 
 /* Header Styles */
-h2 {
+h2, h3, p {
   font-family: Arial, sans-serif;
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
   color: #1a1a1a;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   text-transform: uppercase;
   letter-spacing: 2px;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
@@ -28,8 +28,8 @@ h2:hover {
 
 /* Responsive Header */
 @media (max-width: 600px) {
-  h2 {
-    font-size: 2rem;
+  h2, h3, p  {
+    font-size: 1.2rem;
   }
 }
 
@@ -134,8 +134,7 @@ h2:hover {
 }
 
 .answer {
-  margin: 10px;
-  padding: 10px 20px;
+  margin: 10px 0px;
 }
 
 .game-button {
@@ -230,13 +229,13 @@ h2:hover {
   }
 }
 
-/* Save Message */
+/* Save Message 
 .save-message {
   color: #4CAF50;
   text-align: center;
   margin-top: 10px;
 }
-
+*/
 /* Empty Row and Tile Styles */
 .empty-row {
   display: flex;

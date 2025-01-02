@@ -15,8 +15,8 @@ const App = () => {
   const [isInvalidGuess, setIsInvalidGuess] = useState(false); // Flag for invalid guess
   const [isGameOver, setIsGameOver] = useState(false); // Flag for game over state
   const [streak, setStreak] = useState(0); // User's winning streak
-  const [isSaved, setIsSaved] = useState(false); // Flag for game save status
   const [flippedLetters, setFlippedLetters] = useState([]); // State for title animation
+  const [lastResetDate, setLastResetDate] = useState(null); //keep track of when the game was last reset
 
   useEffect(() => {
     setPickedWords(generateNewWords()); // Initialize game with new words
@@ -53,11 +53,25 @@ const App = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
 // Memoized values to optimize performance
 const targetWord = useMemo(() => pickedWords[currentLevelIndex] || '', [pickedWords, currentLevelIndex]);
 const level = useMemo(() => currentLevelIndex + 1, [currentLevelIndex]);
 const maxAttempts = useMemo(() => targetWord ? 11 - targetWord.length : 0, [targetWord]);
 const [remainingGuesses, setRemainingGuesses] = useState(7);
+
+// Save the current game state
+const saveGame = useCallback(() => {
+  const gameState = {
+    pickedWords,
+    currentLevelIndex,
+    guesses,
+    currentGuess,
+    isGameOver,
+    streak
+  };
+  localStorage.setItem('megaWordleState', JSON.stringify(gameState));
+}, [pickedWords, currentLevelIndex, guesses, currentGuess, isGameOver, streak]);
 
 // Handle user's guess submission
 const handleGuess = useCallback(() => {
@@ -79,12 +93,13 @@ const handleGuess = useCallback(() => {
     }
     setCurrentGuess("");
     document.activeElement.blur();
+    saveGame();
   } else {
     // Handle invalid guess
     setIsInvalidGuess(true);
     setTimeout(() => setIsInvalidGuess(false), 1000);
   }
-}, [currentGuess, targetWord, guesses, level, streak, maxAttempts]);
+}, [currentGuess, targetWord, guesses, level, streak, maxAttempts, saveGame]);
 
 // Handle keyboard input
 const handleKeyDown = useCallback((event) => {
@@ -146,26 +161,36 @@ const handleBackspace = useCallback(() => {
   setCurrentGuess(prev => prev.slice(0, -1));
 }, []);
 
-// Save the current game state
-const saveGame = useCallback(() => {
-  const gameState = {
-    pickedWords,
-    currentLevelIndex,
-    guesses,
-    currentGuess,
-    isGameOver,
-    streak
-  };
-  localStorage.setItem('megaWordleState', JSON.stringify(gameState));
-  setIsSaved(true);
-  setTimeout(() => setIsSaved(false), 2000); // Reset saved message after 2 seconds
-}, [pickedWords, currentLevelIndex, guesses, currentGuess, isGameOver, streak]);
-
-  // Function to clear the saved game state and restart the game
-  const clearSavedGame = useCallback(() => {
-    localStorage.removeItem('megaWordleState');
-    restartGame();
-  }, [restartGame]);
+    // Function to check and reset game at midnight
+    const checkAndResetAtMidnight = useCallback(() => {
+      const now = new Date();
+      const todayDate = now.toDateString();
+  
+      if (lastResetDate !== todayDate) {
+        // It's a new day, reset the game
+        localStorage.removeItem('megaWordleState');
+        restartGame();
+        setLastResetDate(todayDate);
+        localStorage.setItem('lastResetDate', todayDate);
+      }
+    }, [lastResetDate, restartGame]);
+  
+    // Use effect for midnight reset check
+    useEffect(() => {
+      // Check for reset on component mount
+      const savedLastResetDate = localStorage.getItem('lastResetDate');
+      if (savedLastResetDate) {
+        setLastResetDate(savedLastResetDate);
+      }
+      checkAndResetAtMidnight();
+  
+      // Set up interval to check for midnight reset
+      const intervalId = setInterval(() => {
+        checkAndResetAtMidnight();
+      }, 60000); // Check every minute
+  
+      return () => clearInterval(intervalId);
+    }, [checkAndResetAtMidnight]);
 
   // Function to render empty tiles for remaining guesses
   const renderEmptyTiles = useCallback(() => {
@@ -251,7 +276,6 @@ const saveGame = useCallback(() => {
         />
       )}
       {renderEmptyTiles()}
-      <div className="game-controls">
       {isGameOver && (
         <>
           <h3>Correct answer:</h3>
@@ -302,15 +326,6 @@ const saveGame = useCallback(() => {
           specialKeyStyle={customSpecialKeyStyle}
         />
       )}
-      
-        <button onClick={saveGame} className="game-button save-button">
-          Save Game
-        </button>
-        <button onClick={clearSavedGame} className="game-button clear-button">
-          Clear Saved Game
-        </button>
-      </div>
-      {isSaved && <p className="save-message">Game saved successfully!</p>}
     </div>
   );
 };
