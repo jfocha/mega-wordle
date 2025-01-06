@@ -13,7 +13,7 @@
   justify-content: center;
   align-items: center;
   margin: 2px;
-  color: white;
+  color: whitesmoke;
   font-weight: bold;
   font-size: 1.2em;
   border: 2px solid black;
@@ -22,15 +22,15 @@
 
 /* Tile Status Colors */
 .correct {
-  background-color: green;
+  background-color: #6aaa64;
 }
 
 .present {
-  background-color: gold;
+  background-color: #c9b458;
 }
 
 .absent {
-  background-color: darkgray;
+  background-color: #787c7e;
 }
 
 /* Tile Flip Animation */
@@ -53,9 +53,8 @@
 /* Input Tile Styles */
 .row .input,
 .tile .input {
-  color: black;
-  border: 2px solid #878a8c;
-  background-color: #ffffff;
+  color: whitesmoke;
+  border: 2px solid #d3d6da;
   animation: pulse 1.5s infinite;
 }
 

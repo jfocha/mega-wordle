@@ -17,6 +17,7 @@ const App = () => {
   const [streak, setStreak] = useState(0); // User's winning streak
   const [flippedLetters, setFlippedLetters] = useState([]); // State for title animation
   const [lastResetDate, setLastResetDate] = useState(null); //keep track of when the game was last reset
+  const [remainingGuesses, setRemainingGuesses] = useState(7);
   const now = new Date();
   const todayDate = now.toDateString();
 
@@ -31,6 +32,7 @@ const App = () => {
       setIsGameOver(parsedState.isGameOver);
       setStreak(parsedState.streak);
       setLastResetDate(parsedState.lastResetDate)
+      setRemainingGuesses(parsedState.remainingGuesses)
     } else {
       setPickedWords(generateNewWords()); // Initialize game with new words
       setLastResetDate(todayDate);
@@ -56,7 +58,7 @@ const App = () => {
 const targetWord = useMemo(() => pickedWords[currentLevelIndex] || '', [pickedWords, currentLevelIndex]);
 const level = useMemo(() => currentLevelIndex + 1, [currentLevelIndex]);
 const maxAttempts = useMemo(() => targetWord ? 11 - targetWord.length : 0, [targetWord]);
-const [remainingGuesses, setRemainingGuesses] = useState(7);
+
 
 // Save the current game state
 const saveGame = useCallback(() => {
