@@ -4,11 +4,9 @@
   flex-direction: column;
   align-items: center;
   margin: 20px 0 20px 0;
-  /*position: fixed;
-  bottom: 10px;*/
   left: 0;
   right: 0;
-  width: 100%;
+  width: 100vw;
   max-width: 500px; /* Limit maximum width on larger screens */
   margin-left: auto;
   margin-right: auto;
@@ -28,7 +26,7 @@
   border-radius: 4px;
   font-family: monospace;
   font-size: 1.2rem;
-  min-width: 33px;
+  min-width: 39px;
   height: 35px;
   text-align: center;
   color: black;
@@ -69,45 +67,35 @@
 .keys.special {
   flex: 1 0 auto; /* Flexible size for special keys (Enter, Backspace) */
   width: auto;
-  min-width: 65px;
+  min-width: 50px;
   background-color: #868686;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
 }
 
 /* Media Queries for Responsive Design */
 @media screen and (max-width: 480px) {
-  .keyboard {
-    bottom: 10px;
-  }
 
   .keys {
     padding: 8px;
-    font-size: 1.2rem;
-    min-width: 33px;
+    font-size: 1rem;
+    min-width: 35px;
   }
 }
 
 @media screen and (max-height: 600px) and (orientation: landscape) {
-  .keyboard {
-    position: static;
-    margin: 10px 0;
-  }
 
   .keys {
     padding: 6px;
-    font-size: 1.2rem;
-    min-width: 33px;
+    font-size: 1rem;
+    min-width: 35px;
   }
 }
 
 @media screen and (min-width: 768px) {
-  .keyboard {
-    bottom: 20px;
-  }
 
   .keys {
     padding: 12px;
     font-size: 1.2rem;
-    min-width: 33px;
+    min-width: 35px;
   }
 }
