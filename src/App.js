@@ -19,13 +19,6 @@ const App = () => {
   const [lastResetDate, setLastResetDate] = useState(null); //keep track of when the game was last reset
 
   useEffect(() => {
-    setPickedWords(generateNewWords()); // Initialize game with new words
-    // Load persistent streak from local storage
-    const savedStreak = localStorage.getItem('megaWordleStreak');
-    if (savedStreak) {
-      setStreak(parseInt(savedStreak, 10));
-    }
-    // Load saved game state
     const savedState = localStorage.getItem('megaWordleState');
     if (savedState) {
       const parsedState = JSON.parse(savedState);
@@ -35,9 +28,14 @@ const App = () => {
       setCurrentGuess(parsedState.currentGuess);
       setIsGameOver(parsedState.isGameOver);
       setStreak(parsedState.streak);
+      setLastResetDate(parsedState.lastResetDate)
     } else {
-      setPickedWords(generateNewWords());
+      setPickedWords(generateNewWords()); // Initialize game with new words
+      const now = new Date();
+      const todayDate = now.toDateString();
+      setLastResetDate(todayDate);
     }
+
     // Timer for title
     const title = "MEGAWORDLE";
     let timer;
@@ -68,10 +66,12 @@ const saveGame = useCallback(() => {
     guesses,
     currentGuess,
     isGameOver,
-    streak
+    streak,
+    remainingGuesses,
+    lastResetDate
   };
   localStorage.setItem('megaWordleState', JSON.stringify(gameState));
-}, [pickedWords, currentLevelIndex, guesses, currentGuess, isGameOver, streak]);
+}, [pickedWords, currentLevelIndex, guesses, currentGuess, isGameOver, streak, remainingGuesses, lastResetDate]);
 
 // Handle user's guess submission
 const handleGuess = useCallback(() => {
@@ -86,7 +86,7 @@ const handleGuess = useCallback(() => {
         // Update streak if player wins the final level
         const newStreak = streak + 1;
         setStreak(newStreak);
-        localStorage.setItem('megaWordleStreak', newStreak.toString());
+        saveGame();
       }
     } else if (updatedGuesses.length >= maxAttempts) {
       setIsGameOver(true);
@@ -132,8 +132,9 @@ const nextLevel = useCallback(() => {
     setCurrentGuess("");
     setRemainingGuesses(7 - level);
     setIsGameOver(false);
+    saveGame();
   }
-}, [currentLevelIndex, targetWord.length, level]);
+}, [currentLevelIndex, targetWord.length, level, saveGame]);
 
 // Restart the game
 const restartGame = useCallback(() => {
@@ -145,9 +146,8 @@ const restartGame = useCallback(() => {
   setIsGameOver(false);
   if (level < 5) {
     setStreak(0);
-    localStorage.setItem('megaWordleStreak', '0');
-  }
-}, [level]);
+    saveGame();}
+}, [level, saveGame]);
 
 // Handle on-screen keyboard key clicks
 const handleKeyClick = useCallback((letter) => {
@@ -165,32 +165,34 @@ const handleBackspace = useCallback(() => {
     const checkAndResetAtMidnight = useCallback(() => {
       const now = new Date();
       const todayDate = now.toDateString();
-  
-      if (lastResetDate !== todayDate) {
+
+      if (lastResetDate !== todayDate && lastResetDate !== null) {
         // It's a new day, reset the game
         localStorage.removeItem('megaWordleState');
         restartGame();
         setLastResetDate(todayDate);
-        localStorage.setItem('lastResetDate', todayDate);
+        saveGame();
       }
-    }, [lastResetDate, restartGame]);
+    }, [lastResetDate, restartGame, saveGame]);
   
     // Use effect for midnight reset check
     useEffect(() => {
       // Check for reset on component mount
-      const savedLastResetDate = localStorage.getItem('lastResetDate');
-      if (savedLastResetDate) {
-        setLastResetDate(savedLastResetDate);
+      const savedState = localStorage.getItem('megaWordleState');
+      if (savedState) {
+        const parsedState = JSON.parse(savedState);
+        setLastResetDate(parsedState.lastResetDate);
       }
       checkAndResetAtMidnight();
   
       // Set up interval to check for midnight reset
       const intervalId = setInterval(() => {
         checkAndResetAtMidnight();
+        saveGame();
       }, 60000); // Check every minute
   
       return () => clearInterval(intervalId);
-    }, [checkAndResetAtMidnight]);
+    }, [checkAndResetAtMidnight, saveGame]);
 
   // Function to render empty tiles for remaining guesses
   const renderEmptyTiles = useCallback(() => {
@@ -205,35 +207,6 @@ const handleBackspace = useCallback(() => {
       </div>
     ));
   }, [remainingGuesses, isGameOver, targetWord.length]);
-
-  // Custom style for keyboard keys
-  const customKeyStyle = {
-    width: '27px',
-    height: '35px',
-    backgroundColor: '#d3d6da',
-    color: '#1a1a1b',
-    border: '2px solid #6a6a6a',
-    borderRadius: '4px',
-    fontSize: '1.2rem',
-    fontWeight: 'bold',
-    margin: '2px',
-    padding: '0',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  };
-
-  // Custom style for special keyboard keys (e.g., Enter, Backspace)
-  const customSpecialKeyStyle = {
-    ...customKeyStyle,
-    width: 'auto',
-    minWidth: '65px',
-    backgroundColor: '#6a6a6a',
-    border: '2px solid #8a8a8a',
-    fontSize: '0.8rem',
-  };
 
   return (
     <div className="main-container">
@@ -277,7 +250,7 @@ const handleBackspace = useCallback(() => {
       )}
       {renderEmptyTiles()}
       {isGameOver && (
-        <>
+        <div className="game-over">
           <h3>Correct answer:</h3>
           <div className="answer">
             <Row guess={targetWord} targetWord={targetWord} />
@@ -285,7 +258,9 @@ const handleBackspace = useCallback(() => {
           {(guesses[guesses.length - 1] === targetWord) ? (
             (level === 5) ? (
               <>
-                <h4>You Win!</h4>
+                <div className="win">
+                  <h4 className="neon-text rotating-text" data-text="You Win!">You Win!</h4>
+                </div>
                 <p>Streak: {streak}</p>
                 <button
                   onClick={restartGame}
@@ -313,7 +288,7 @@ const handleBackspace = useCallback(() => {
               </button>
             </>
           )}
-        </>
+        </div>
       )}
       {!isGameOver && (
         <Keys
@@ -322,8 +297,6 @@ const handleBackspace = useCallback(() => {
           onKeyClick={handleKeyClick}
           onEnter={handleGuess}
           onBackspace={handleBackspace}
-          keyStyle={customKeyStyle}
-          specialKeyStyle={customSpecialKeyStyle}
         />
       )}
     </div>
