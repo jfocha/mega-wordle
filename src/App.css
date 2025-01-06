@@ -1,9 +1,10 @@
 /* Global Styles */
-body {
+/*body {
   margin: 0px;
   font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #F3E7E9, #E3EEFF);
-}
+  height: 100vh;
+}*/
 
 /* Header Styles */
 h2, h3, p {
@@ -35,17 +36,26 @@ h2:hover {
 }
 
 /* Main Container Layout */
-.main-container, .game-over {
+.main-container {
+  margin: 0px;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #F3E7E9, #E3EEFF);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.game-over {
+  padding: 20px 0 20px 0;
+  margin: 0px;
+  font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-.game-over {
-  position: fixed;
-  bottom: 10px;
-}
+} 
 
 /* Guesses Container */
 .guesses {
@@ -263,7 +273,7 @@ h2:hover {
 
 .neon-text {
   position: relative;
-  font-family: "Lucida Console" monospace;
+  font-family: "Fixedsys" monospace;
   font-size: 2.2rem;
   position: relative;
   width: 100%;

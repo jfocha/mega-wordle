@@ -17,6 +17,8 @@ const App = () => {
   const [streak, setStreak] = useState(0); // User's winning streak
   const [flippedLetters, setFlippedLetters] = useState([]); // State for title animation
   const [lastResetDate, setLastResetDate] = useState(null); //keep track of when the game was last reset
+  const now = new Date();
+  const todayDate = now.toDateString();
 
   useEffect(() => {
     const savedState = localStorage.getItem('megaWordleState');
@@ -31,8 +33,6 @@ const App = () => {
       setLastResetDate(parsedState.lastResetDate)
     } else {
       setPickedWords(generateNewWords()); // Initialize game with new words
-      const now = new Date();
-      const todayDate = now.toDateString();
       setLastResetDate(todayDate);
     }
 
@@ -50,7 +50,7 @@ const App = () => {
     flipNextLetter(0);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [todayDate]);
 
 // Memoized values to optimize performance
 const targetWord = useMemo(() => pickedWords[currentLevelIndex] || '', [pickedWords, currentLevelIndex]);
@@ -163,9 +163,6 @@ const handleBackspace = useCallback(() => {
 
     // Function to check and reset game at midnight
     const checkAndResetAtMidnight = useCallback(() => {
-      const now = new Date();
-      const todayDate = now.toDateString();
-
       if (lastResetDate !== todayDate && lastResetDate !== null) {
         // It's a new day, reset the game
         localStorage.removeItem('megaWordleState');
@@ -173,7 +170,7 @@ const handleBackspace = useCallback(() => {
         setLastResetDate(todayDate);
         saveGame();
       }
-    }, [lastResetDate, restartGame, saveGame]);
+    }, [lastResetDate, todayDate, restartGame, saveGame]);
   
     // Use effect for midnight reset check
     useEffect(() => {
@@ -181,7 +178,9 @@ const handleBackspace = useCallback(() => {
       const savedState = localStorage.getItem('megaWordleState');
       if (savedState) {
         const parsedState = JSON.parse(savedState);
-        setLastResetDate(parsedState.lastResetDate);
+        if (parsedState.lastResetDate === todayDate) {
+          setLastResetDate(parsedState.lastResetDate);
+        }
       }
       checkAndResetAtMidnight();
   
@@ -192,7 +191,7 @@ const handleBackspace = useCallback(() => {
       }, 60000); // Check every minute
   
       return () => clearInterval(intervalId);
-    }, [checkAndResetAtMidnight, saveGame]);
+    }, [todayDate, checkAndResetAtMidnight, saveGame]);
 
   // Function to render empty tiles for remaining guesses
   const renderEmptyTiles = useCallback(() => {
@@ -210,6 +209,7 @@ const handleBackspace = useCallback(() => {
 
   return (
     <div className="main-container">
+      <div className="top">
       <div className="title-wrapper">
         <div className="title-line">
           {["M", "E", "G", "A"].map((letter, index) => (
@@ -249,6 +249,8 @@ const handleBackspace = useCallback(() => {
         />
       )}
       {renderEmptyTiles()}
+      </div>
+      <div className="bottom">
       {isGameOver && (
         <div className="game-over">
           <h3>Correct answer:</h3>
@@ -299,6 +301,7 @@ const handleBackspace = useCallback(() => {
           onBackspace={handleBackspace}
         />
       )}
+      </div>
     </div>
   );
 };
