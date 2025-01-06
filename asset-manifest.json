@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/mega-wordle/static/css/main.75b9e101.css",
-    "main.js": "/mega-wordle/static/js/main.3172b5db.js",
+    "main.css": "/mega-wordle/static/css/main.e72df9d8.css",
+    "main.js": "/mega-wordle/static/js/main.d17b3ac5.js",
     "static/js/488.1f369dc0.chunk.js": "/mega-wordle/static/js/488.1f369dc0.chunk.js",
     "index.html": "/mega-wordle/index.html",
-    "main.75b9e101.css.map": "/mega-wordle/static/css/main.75b9e101.css.map",
-    "main.3172b5db.js.map": "/mega-wordle/static/js/main.3172b5db.js.map",
+    "main.e72df9d8.css.map": "/mega-wordle/static/css/main.e72df9d8.css.map",
+    "main.d17b3ac5.js.map": "/mega-wordle/static/js/main.d17b3ac5.js.map",
     "488.1f369dc0.chunk.js.map": "/mega-wordle/static/js/488.1f369dc0.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.75b9e101.css",
-    "static/js/main.3172b5db.js"
+    "static/css/main.e72df9d8.css",
+    "static/js/main.d17b3ac5.js"
   ]
 }
