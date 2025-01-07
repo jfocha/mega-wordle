@@ -16,7 +16,7 @@
   color: whitesmoke;
   font-weight: bold;
   font-size: 1.2em;
-  border: 2px solid black;
+  border: 2px solid #d3d6da;
   background: #414141;
   transition: background-color 0.5s ease;
 }
