@@ -22,30 +22,41 @@ const App = () => {
   const todayDate = now.toDateString();
 
   useEffect(() => {
-    const savedState = localStorage.getItem('megaWordleState');
-    if (savedState) {
-      const parsedState = JSON.parse(savedState);
-      setPickedWords(parsedState.pickedWords);
-      setCurrentLevelIndex(parsedState.currentLevelIndex);
-      setGuesses(parsedState.guesses);
-      setCurrentGuess(parsedState.currentGuess);
-      setIsGameOver(parsedState.isGameOver);
-      setStreak(parsedState.streak);
-      setLastResetDate(parsedState.lastResetDate)
-      setRemainingGuesses(parsedState.remainingGuesses)
-    } else {
-      setPickedWords(generateNewWords()); // Initialize game with new words
-      setLastResetDate(todayDate);
+    let parsedState = null;
+
+    try {
+      const savedState = localStorage.getItem('megaWordleState');
+      if (savedState) {
+        parsedState = JSON.parse(savedState);
+        setPickedWords(parsedState.pickedWords);
+        setCurrentLevelIndex(parsedState.currentLevelIndex);
+        setGuesses(parsedState.guesses);
+        setCurrentGuess(parsedState.currentGuess);
+        setIsGameOver(parsedState.isGameOver);
+        setStreak(parsedState.streak);
+        setLastResetDate(parsedState.lastResetDate);
+        setRemainingGuesses(parsedState.remainingGuesses);
+      }
+    } catch (error) {
+      console.error('Error retrieving or parsing saved game state:', error);
+      // If there's an error, we'll fall back to starting a new game
+      parsedState = null;
+    } finally {
+      if (!parsedState) {
+        // If we couldn't retrieve a valid saved state, start a new game
+        setPickedWords(generateNewWords());
+        setLastResetDate(todayDate);
+      }
     }
 
-    // Timer for title
+    // Timer for title animation (rest of the existing code)
     const title = "MEGAWORDLE";
     let timer;
 
     const flipNextLetter = (index) => {
       if (index < title.length) {
         setFlippedLetters(prev => [...prev, index]);
-        timer = setTimeout(() => flipNextLetter(index + 1), 500); // 500ms delay between each letter
+        timer = setTimeout(() => flipNextLetter(index + 1), 500);
       }
     };
 
