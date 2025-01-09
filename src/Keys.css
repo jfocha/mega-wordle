@@ -68,7 +68,7 @@
   flex: 1 0 auto; /* Flexible size for special keys (Enter, Backspace) */
   width: auto;
   min-width: 50px;
-  background-color: #868686;
+  background-color: #d3d6da;
   font-size: 0.8rem;
 }
 

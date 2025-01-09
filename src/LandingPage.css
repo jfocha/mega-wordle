@@ -1,0 +1,68 @@
+.landing-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background-color: #333333;
+    padding: 20px;
+  }
+  
+  .landing-page h1 {
+    color: whitesmoke;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+  }
+  
+  .instructions {
+    color: whitesmoke;
+    background-color: #414141;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 600px;
+    margin-bottom: 20px;
+  }
+  
+  .instructions h2 {
+    margin-bottom: 10px;
+  }
+  
+  .instructions ul {
+    text-align: left;
+    padding-left: 20px;
+  }
+  
+  .instructions li {
+    margin-bottom: 10px;
+  }
+  
+  .green {
+    color: #6aaa64;
+    font-weight: bold;
+  }
+  
+  .yellow {
+    color: #c9b458;
+    font-weight: bold;
+  }
+  
+  .gray {
+    color: #787c7e;
+    font-weight: bold;
+  }
+  
+  .start-button {
+    font-size: 1.2em;
+    padding: 10px 20px;
+    background-color: #6aaa64;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .start-button:hover {
+    background-color: #4a8c4a;
+  }
