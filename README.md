@@ -1,5 +1,7 @@
 # Mega Wordle
 
+![badge](https://img.shields.io/badge/license-GNU%20GPLv3-green)
+
 Mega Wordle is an extended version of the popular word-guessing game, Wordle. This project was built using React and offers a multi-level word-guessing experience.
 
 ## Features
@@ -13,23 +15,7 @@ Mega Wordle is an extended version of the popular word-guessing game, Wordle. Th
 
 ## Installation
 
-To run this project locally, follow these steps:
-
-1. Clone the repository:
-https://github.com/jfocha/mega-wordle.git
-
-
-2. Navigate to the project directory:
-cd mega-wordle
-
-3. Install the dependencies:
-npm install
-
-4. Start the development server:
-npm start
-
-
-5. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+None. It's deployed at *[https://jfocha.github.io/mega-wordle](https://jfocha.github.io/mega-wordle)*
 
 ## How to Play
 
@@ -43,6 +29,8 @@ npm start
 5. The game has 5 levels in total, with word lengths increasing from 4 to 8 letters.
 6. Your winning streak is tracked across games.
 7. The game resets daily at midnight.
+
+![screenshot](screenshot.jpg)
 
 ## Technologies Used
 
