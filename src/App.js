@@ -238,99 +238,94 @@ const App = () => {
     startTitleAnimation();
   }, [startTitleAnimation]);
 
-  // Render the landing page or the game
-  if (showLandingPage) {
-    return (
-      <Div100vh>
-        <LandingPage onStart={startGame} />
-      </Div100vh>
-    )
-  };
-
   return (
     <Div100vh className="main-container">
-      <div className="top">
-        <div className="title-wrapper">
-          <div className="title-line">
-            {["M", "E", "G", "A"].map((letter, index) => (
-              <div key={index} className={`card-wrapper ${flippedLetters.includes(index) ? 'flip-down' : ''}`}>
-                <div className="card">
-                  <div className="front">{letter}</div>
-                  <div className="back">{letter}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="title-line">
-            {["W", "O", "R", "D", "L", "E"].map((letter, index) => (
-              <div key={index + 4} className={`card-wrapper ${flippedLetters.includes(index + 4) ? 'flip-down' : ''}`}>
-                <div className="card">
-                  <div className="front">{letter}</div>
-                  <div className="back">{letter}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        {!animationTriggered}
-        {isInvalidGuess ? (<h3>Not in word list</h3>) : (<h3>Level {level}</h3>)}
-        <div className="guesses">
-          {guesses.map((guess, index) => (
-            <div key={index}>
-              <Row guess={guess} targetWord={targetWord} isInput={false} />
-            </div>
-          ))}
-        </div>
-        {!isGameOver && (
-          <Row
-            guess={currentGuess}
-            targetWord={targetWord}
-            className={isInvalidGuess ? 'invalid' : ''}
-            isInput={true}
-          />
-        )}
-        {renderEmptyTiles()}
-      </div>
-      <div className="bottom">
-        {isGameOver && (
-          <div className="game-over">
-            <h3>Correct answer:</h3>
-            <div className="answer">
-              <Row guess={targetWord} targetWord={targetWord} />
-            </div>
-            {(guesses[guesses.length - 1] === targetWord) ? (
-              (level === 5) ? (
-                <>
-                  <div className="win">
-                    <h4 className="neon-text rotating-text" data-text="You Win!">You Win!</h4>
+      {showLandingPage ? <LandingPage onStart={startGame} /> : (
+        <>
+          <div className="top">
+            <div className="title-wrapper">
+              <div className="title-line">
+                {["M", "E", "G", "A"].map((letter, index) => (
+                  <div key={index} className={`card-wrapper ${flippedLetters.includes(index) ? 'flip-down' : ''}`}>
+                    <div className="card">
+                      <div className="front">{letter}</div>
+                      <div className="back">{letter}</div>
+                    </div>
                   </div>
-                  <p>Streak: {streak}</p>
-                </>
-              ) : (
-                <button
-                  onClick={nextLevel}
-                  className="game-button next-level-button"
-                >
-                  Next Level
-                </button>
-              )
-            ) : (
-              <>
-                <p>Streak ended at: {streak}</p>
-              </>
+                ))}
+              </div>
+              <div className="title-line">
+                {["W", "O", "R", "D", "L", "E"].map((letter, index) => (
+                  <div key={index + 4} className={`card-wrapper ${flippedLetters.includes(index + 4) ? 'flip-down' : ''}`}>
+                    <div className="card">
+                      <div className="front">{letter}</div>
+                      <div className="back">{letter}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {!animationTriggered}
+            {isInvalidGuess ? (<h3>Not in word list</h3>) : (<h3>Level {level}</h3>)}
+            <div className="guesses">
+              {guesses.map((guess, index) => (
+                <div key={index}>
+                  <Row guess={guess} targetWord={targetWord} isInput={false} />
+                </div>
+              ))}
+            </div>
+            {!isGameOver && (
+              <Row
+                guess={currentGuess}
+                targetWord={targetWord}
+                className={isInvalidGuess ? 'invalid' : ''}
+                isInput={true}
+              />
+            )}
+            {renderEmptyTiles()}
+          </div>
+          <div className="bottom">
+            {isGameOver && (
+              <div className="game-over">
+                <h3>Correct answer:</h3>
+                <div className="answer">
+                  <Row guess={targetWord} targetWord={targetWord} />
+                </div>
+                {(guesses[guesses.length - 1] === targetWord) ? (
+                  (level === 5) ? (
+                    <>
+                      <div className="win">
+                        <h4 className="neon-text rotating-text" data-text="You Win!">You Win!</h4>
+                      </div>
+                      <p>Streak: {streak}</p>
+                    </>
+                  ) : (
+                    <button
+                      onClick={nextLevel}
+                      className="game-button next-level-button"
+                    >
+                      Next Level
+                    </button>
+                  )
+                ) : (
+                  <>
+                    <p>Streak ended at: {streak}</p>
+                  </>
+                )}
+              </div>
+            )}
+            {!isGameOver && (
+              <Keys
+                guesses={guesses}
+                targetWord={targetWord}
+                onKeyClick={handleKeyClick}
+                onEnter={handleGuess}
+                onBackspace={handleBackspace}
+              />
             )}
           </div>
-        )}
-        {!isGameOver && (
-          <Keys
-            guesses={guesses}
-            targetWord={targetWord}
-            onKeyClick={handleKeyClick}
-            onEnter={handleGuess}
-            onBackspace={handleBackspace}
-          />
-        )}
-      </div>
+        </>
+      )}
     </Div100vh>
   );
 };
