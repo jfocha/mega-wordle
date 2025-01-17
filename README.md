@@ -1,70 +1,64 @@
-# Getting Started with Create React App
+# Mega Wordle
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Mega Wordle is an extended version of the popular word-guessing game, Wordle. This project was built using React and offers a multi-level word-guessing experience.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- Multiple levels with increasing word lengths
+- Daily reset of the game
+- Winning streak tracking
+- On-screen keyboard
+- Responsive design for various screen sizes
+- Local storage to save game progress
 
-### `npm start`
+## Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+To run this project locally, follow these steps:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. Clone the repository:
+https://github.com/jfocha/mega-wordle.git
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Navigate to the project directory:
+cd mega-wordle
 
-### `npm run build`
+3. Install the dependencies:
+npm install
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. Start the development server:
+npm start
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+5. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-### `npm run eject`
+## How to Play
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. The game starts with a 4-letter word.
+2. You have 7 attempts to guess the word correctly.
+3. After each guess, the letters will be colored to indicate:
+- Green: The letter is correct and in the right position.
+- Yellow: The letter is in the word but in the wrong position.
+- Gray: The letter is not in the word.
+4. If you guess the word correctly, you move to the next level with a longer word.
+5. The game has 5 levels in total, with word lengths increasing from 4 to 8 letters.
+6. Your winning streak is tracked across games.
+7. The game resets daily at midnight.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Technologies Used
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- React
+- CSS
+- Local Storage for game state persistence
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Contributing
 
-## Learn More
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## License
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This project is licensed under the GPL License. See the [LICENSE](GPL License.txt) file for details.
 
-### Code Splitting
+## Acknowledgments
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Inspired by the original [Wordle](https://www.nytimes.com/games/wordle/index.html) game.
+- Thanks to all contributors and users of Mega Wordle!

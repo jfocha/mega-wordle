@@ -240,8 +240,12 @@ const App = () => {
 
   // Render the landing page or the game
   if (showLandingPage) {
-    return <LandingPage onStart={startGame} />;
-  }
+    return (
+      <Div100vh>
+        <LandingPage onStart={startGame} />
+      </Div100vh>
+    )
+  };
 
   return (
     <Div100vh className="main-container">
