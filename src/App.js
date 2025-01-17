@@ -1,5 +1,6 @@
 // Import necessary React hooks and components
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import Div100vh from 'react-div-100vh';
 import "./App.css";
 import Row from "./Row.jsx";
 import Keys from "./Keys.jsx";
@@ -125,7 +126,7 @@ const App = () => {
     if (isGameOver) return;
     if (event.key === 'Enter') {
       handleGuess();
-      
+
     } else if (event.key === 'Backspace') {
       setCurrentGuess(prev => prev.slice(0, -1));
     } else if (/^[A-Za-z]$/.test(event.key)) {
@@ -243,7 +244,7 @@ const App = () => {
   }
 
   return (
-    <div className="main-container">
+    <Div100vh className="main-container">
       <div className="top">
         <div className="title-wrapper">
           <div className="title-line">
@@ -268,7 +269,7 @@ const App = () => {
           </div>
         </div>
         {!animationTriggered}
-        {isInvalidGuess ? (<h3>Not in word list</h3>) : (<h3>Level {level}</h3>)} 
+        {isInvalidGuess ? (<h3>Not in word list</h3>) : (<h3>Level {level}</h3>)}
         <div className="guesses">
           {guesses.map((guess, index) => (
             <div key={index}>
@@ -326,7 +327,7 @@ const App = () => {
           />
         )}
       </div>
-    </div>
+    </Div100vh>
   );
 };
 
