@@ -110,8 +110,6 @@ const App = () => {
         }
       } else if (updatedGuesses.length >= maxAttempts) {
         setIsGameOver(true);
-        //setStreak(0);
-        //saveGame();
       }
       setCurrentGuess("");
       document.activeElement.blur();
@@ -302,12 +300,6 @@ const App = () => {
                     <h4 className="neon-text rotating-text" data-text="You Win!">You Win!</h4>
                   </div>
                   <p>Streak: {streak}</p>
-                  {/*<button
-                    onClick={restartGame}
-                    className="game-button restart-button"
-                  >
-                    Restart Game
-                  </button>*/}
                 </>
               ) : (
                 <button
@@ -320,12 +312,6 @@ const App = () => {
             ) : (
               <>
                 <p>Streak ended at: {streak}</p>
-                {/*<button
-                  onClick={restartGame}
-                  className="game-button restart-button"
-                >
-                  Restart Game
-                </button>*/}
               </>
             )}
           </div>
