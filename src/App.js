@@ -110,6 +110,8 @@ const App = () => {
         }
       } else if (updatedGuesses.length >= maxAttempts) {
         setIsGameOver(true);
+        //setStreak(0);
+        //saveGame();
       }
       setCurrentGuess("");
       document.activeElement.blur();
@@ -185,13 +187,15 @@ const App = () => {
   // Function to check and reset game at midnight
   const checkAndResetAtMidnight = useCallback(() => {
     if (lastResetDate !== todayDate && lastResetDate !== null) {
+      const streakSave = streak;
       // It's a new day, reset the game
       localStorage.removeItem('megaWordleState');
       restartGame();
       setLastResetDate(todayDate);
+      setStreak(streakSave);
       saveGame();
     }
-  }, [lastResetDate, todayDate, restartGame, saveGame]);
+  }, [lastResetDate, todayDate, streak, restartGame, saveGame]);
 
   // Use effect for midnight reset check
   useEffect(() => {
@@ -266,7 +270,7 @@ const App = () => {
           </div>
         </div>
         {!animationTriggered}
-        <h3>Level {level}</h3>
+        {isInvalidGuess ? (<h3>Not in word list</h3>) : (<h3>Level {level}</h3>)} 
         <div className="guesses">
           {guesses.map((guess, index) => (
             <div key={index}>
@@ -298,12 +302,12 @@ const App = () => {
                     <h4 className="neon-text rotating-text" data-text="You Win!">You Win!</h4>
                   </div>
                   <p>Streak: {streak}</p>
-                  <button
+                  {/*<button
                     onClick={restartGame}
                     className="game-button restart-button"
                   >
                     Restart Game
-                  </button>
+                  </button>*/}
                 </>
               ) : (
                 <button
@@ -316,12 +320,12 @@ const App = () => {
             ) : (
               <>
                 <p>Streak ended at: {streak}</p>
-                <button
+                {/*<button
                   onClick={restartGame}
                   className="game-button restart-button"
                 >
                   Restart Game
-                </button>
+                </button>*/}
               </>
             )}
           </div>
